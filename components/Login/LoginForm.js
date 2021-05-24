@@ -15,7 +15,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 import { Formik } from "formik";
 import ErrorMessage from "./ErrorMessage";
 import { auth } from "../../firebase";
@@ -58,15 +58,7 @@ function LoginForm({ navigation }) {
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={{
-          width: 200,
-          height: 200,
-          uri:
-            "https://i.vimeocdn.com/portrait/43791933_640x640?subrect=33%2C35%2C1088%2C1090&r=cover",
-        }}
-      />
+      <Image style={styles.logo} source={require("../../assets/Logo.png")} />
 
       <Formik
         initialValues={{ email: "", password: "" }}
@@ -79,7 +71,7 @@ function LoginForm({ navigation }) {
               <Fontisto
                 style={styles.CovidLog}
                 name="email"
-                size={24}
+                size={20}
                 color="black"
               />
               <View style={{ marginLeft: 45, marginRight: 10 }}>
@@ -98,7 +90,7 @@ function LoginForm({ navigation }) {
               <MaterialIcons
                 style={styles.CovidLog}
                 name="lock"
-                size={24}
+                size={20}
                 color="black"
               />
               <View style={{ marginLeft: 45, marginRight: 10 }}>
@@ -133,6 +125,7 @@ function LoginForm({ navigation }) {
         )}
       </Formik>
 
+      <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={styles.googleLogin}
         activeOpacity={0.6}
@@ -144,6 +137,26 @@ function LoginForm({ navigation }) {
         />
         <Text style={styles.googleText}>Sign in with Google</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.fbLogin}
+        activeOpacity={0.6}
+        onPress={() => anonymousSignin()}
+      >
+        <FontAwesome
+     
+              style={styles.fbLogo}
+ 
+                  name="facebook"
+   
+                size={18}
+     
+              color="white"
+       
+        />
+        <Text style={styles.fbText}>Sign in with facebook</Text>
+      </TouchableOpacity>
+      </View>
 
       <StatusBar style={"auto"} />
     </Pressable>
@@ -161,15 +174,16 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginTop: Constants.statusBarHeight,
-    width: 120,
+    width: 200,
     height: 120,
     marginBottom: 30,
+    marginLeft: 50,
   },
   searchBar: {
     width: "90%",
     backgroundColor: "white",
     borderRadius: 30,
-    padding: 10,
+    padding: 8,
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -180,7 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   CovidLog: {
-    height: 30,
+    // height: 30,
     borderRadius: 15,
     justifyContent: "center",
     position: "absolute",
@@ -196,7 +210,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: "center",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
     color: "#474747",
   },
 
@@ -209,26 +223,48 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     marginRight: 20,
   },
+
+  buttonContainer:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   googleLogin: {
     flexDirection: "row",
-    width: Dimensions.get("window").width * 0.85,
     backgroundColor: "white",
     justifyContent: "space-between",
     borderRadius: 50,
   },
+  fbLogin: {
+    flexDirection: "row",
+    backgroundColor: "#326ba8",
+    justifyContent: "space-between",
+    borderRadius: 50,
+    marginLeft: 20,
+  },
   googleLogo: {
-    width: 36,
-    height: 36,
+    width: 25,
+    height: 25,
     alignSelf: "center",
-    marginLeft: 25,
+    marginLeft: 15,
+  },
+  fbLogo: {
+    alignSelf: "center",
+    marginLeft: 15,
   },
   googleText: {
-    padding: 14,
+    padding: 12,
     alignSelf: "center",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 10,
     color: "#474747",
-    marginRight: 50,
+  },
+  fbText: {
+    padding: 12,
+    alignSelf: "center",
+    fontWeight: "bold",
+    fontSize: 10,
+    color: "white",
   },
 });
 export default LoginForm;

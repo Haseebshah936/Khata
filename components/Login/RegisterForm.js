@@ -59,15 +59,7 @@ function RegisterForm({ navigation }) {
 
   return (
     <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={{
-          width: 200,
-          height: 200,
-          uri:
-            "https://i.vimeocdn.com/portrait/43791933_640x640?subrect=33%2C35%2C1088%2C1090&r=cover",
-        }}
-      />
+      <Image style={styles.logo} source={require("../../assets/Logo.png")} />
 
       <Formik
         initialValues={{ userName: "", email: "", password: "" }}
@@ -168,11 +160,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   logo: {
-    marginTop: Constants.statusBarHeight * 2,
-    width: 120,
+    marginTop: Constants.statusBarHeight,
+    width: 200,
     height: 120,
     marginBottom: 30,
-    overflow: "hidden",
+    marginLeft: 50,
   },
   searchBar: {
     width: "90%",

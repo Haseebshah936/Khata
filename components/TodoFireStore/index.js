@@ -27,11 +27,8 @@ function index({ navigation }) {
   const [added, setAdded] = useState(0);
   const [fetched, setFetched] = useState(false);
   const [userId, setUserID] = useState("");
-  const [image, setImage] = useState(
-    "https://example.com/jane-q-user/profile.jpg"
-  );
   const [loading, setLoading] = useState(false);
-  const addTodo = () => {
+  const addTodo =async () => {
     // setData([...data, { todo: task }]);
     let id;
     // var uid = userId + "/";
@@ -43,18 +40,21 @@ function index({ navigation }) {
       } else {
         id = data[data.length - 1].key + 1;
       }
+      let url = await storage.ref().child("Images/" + userId + "/" + id).getDownloadURL();
+      if(url === ""){
+        url = "https://example.com/jane-q-user/profile.jpg"
+      }
       db.collection(userId)
         .doc(id.toString())
         .set({
           key: id,
           todo: task,
-          avatar: image,
+          avatar: url,
         })
         .then(() => {
           console.log("User added!");
         });
       // setTask("");
-      setImage("https://example.com/jane-q-user/profile.jpg");
       setAdded(added + 1);
     } else if (task === "") {
       alert("Enter a Task to Add");
@@ -165,7 +165,7 @@ function index({ navigation }) {
       }
       // setTask("");
     } else if (task === "") {
-      alert("Enter a Task to Add");
+       alert("Enter a Task to Add");
     }
   };
 
@@ -174,8 +174,7 @@ function index({ navigation }) {
     const blob = await response.blob();
     let ref = storage.ref().child("Images/" + userId + "/" + id);
     // setImage(null);
-    await ref.put(blob);
-    setImage(await ref.getDownloadURL());
+    ref.put(blob)
   };
 
   // const getCamerPermission = async () => {
@@ -194,25 +193,23 @@ function index({ navigation }) {
 
   useEffect(() => {
     let unsubscribe;
-    if(added === 0){
-      getData()
-        .then((value) => {
+    getData()
+      .then((value) => {
           console.log(value + "Before storing data");
-          if (value != null) {
+          if (value != null && data.length === 0) {
             setData(JSON.parse(value));
             // console.log(value + "Value");
             console.log(JSON.parse(value) + "Inside the json loadup");
             // console.log(JSON.stringify(data) + "DATA 114");
             setFetched(true);
           }
-        })
-    }
-      
+        }).then(() =>
         getUserID()
           .then((uid) => {
             setUserID(uid);
-            console.log("Inside UseEffect" + userId)
-            unsubscribe = db.collection(uid)
+            console.log("Inside UseEffect" + userId);
+            unsubscribe = db
+              .collection(uid)
               .get()
               .then((querySnapshot) => {
                 console.log("Total users: ", querySnapshot.size);
@@ -224,16 +221,16 @@ function index({ navigation }) {
                   console.log("Data Fetched" + array);
                   setData(array);
                 } else {
-                  // setData([]);
+                  setData([]);
                 }
               });
-            console.log("Ueffect" + data)
+            console.log("Ueffect" + data);
             AsyncStorage.setItem("Todo", JSON.stringify(data));
             setFetched(true);
           })
-          .catch((error) => console.warn(error));
-          // return unsubscribe();
-      
+          .catch((error) => console.warn(error))
+        )  
+    // return unsubscribe();
   }, [added]);
 
   return (
@@ -294,7 +291,7 @@ function index({ navigation }) {
       >
         <Text>Add Image</Text>
       </TouchableOpacity>
-      <Button title={"SignOut"} onPress={signOut} />
+      {/* <Button title={"SignOut"} onPress={signOut} /> */}
       {!fetched ? (
         <ActivityIndicator
           style={{ marginTop: 20 }}

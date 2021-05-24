@@ -68,11 +68,11 @@ function UserData({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-        {/* <Button title={"Open"} onPress={()=> navigation.openDrawer()} /> */}
+      {/* <Button title={"Open"} onPress={()=> navigation.openDrawer()} /> */}
       <FlatList
         data={data}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <Client
             avatar={item.avatar}
             name={item.first_name}
@@ -85,10 +85,7 @@ function UserData({ navigation }) {
           <View style={{ backgroundColor: "white", padding: 10 }} />
         )}
       />
-{/* <TouchableOpacity style={styles.addButton} >
-      <AntDesign  onPress={() => navigation.navigate("Todo")} name="pluscircle" size={50} color="white" />
-</TouchableOpacity> */}
-      <StatusBar style="auto" />
+      <StatusBar style="auto" hidden />
     </SafeAreaView>
   );
 }
