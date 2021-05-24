@@ -18,15 +18,15 @@ import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import * as ImagePicker from "expo-image-picker";
-import ErrorMessage from "../Login/ErrorMessage";
+import ErrorMessage from "./ErrorMessage";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required().label("Product Name"),
-  price: Yup.number().required().label("Price"),
-  description: Yup.string().label("Description"),
+  name: Yup.string().required().label("User Name"),
+  phoneNo: Yup.number().required().label("Phone Number"),
+  address: Yup.string().label("Phone Number"),
 });
 
-function AddProduct({ navigation }) {
+function Check({ navigation }) {
   LogBox.ignoreAllLogs([
     "Setting a timer for a long period of time",
     "Cannot update state",
@@ -39,8 +39,8 @@ function AddProduct({ navigation }) {
     let id = auth.currentUser.uid;
     db.collection(id).doc(0).set({
       userName: values.name,
-      price: values.price,
-      description: values.description,
+      phoneNo: values.phoneNo,
+      address: values.address,
     });
     alert("Login Successfull");
     navigation.replace("Data");
@@ -48,9 +48,11 @@ function AddProduct({ navigation }) {
   };
   const addImage = async () => {
     console.log("Add Image");
-    // let result = await ImagePicker.launchImageLibraryAsync();
-    let result = await ImagePicker.launchCameraAsync();
+    let result = await ImagePicker.launchImageLibraryAsync();
+    // let result = await ImagePicker.launchCameraAsync();
     if (!result.cancelled) {
+      // setImage(result.uri);
+      // uploadImage(result.uri, id).catch((error) => console.log(error));
       setUri(result.uri);
     }
   };
@@ -63,7 +65,7 @@ function AddProduct({ navigation }) {
         resizeMode={"cover"}
       />
       <Formik
-        initialValues={{ name: "", price: "", description: "" }}
+        initialValues={{ name: "", phoneNo: "", address: "" }}
         onSubmit={(values) => login(values)}
         validationSchema={validationSchema}
       >
@@ -71,7 +73,7 @@ function AddProduct({ navigation }) {
           <>
             <View style={styles.loginContainer}>
               <View style={styles.loginTextContainer}>
-                <Text style={styles.loginText}>Add Product To Khata</Text>
+                <Text style={styles.loginText}>CreateAccount</Text>
               </View>
               <TouchableOpacity
                 style={styles.profilePic}
@@ -101,7 +103,7 @@ function AddProduct({ navigation }) {
                 <TextInput
                   onChangeText={handleChange("name")}
                   style={styles.loginInput}
-                  placeholder={"Product Name"}
+                  placeholder={"User Name"}
                   clearButtonMode="always"
                   keyboardType={"default"}
                   onBlur={() => setFieldTouched("name")}
@@ -120,15 +122,15 @@ function AddProduct({ navigation }) {
                   color="black"
                 />
                 <TextInput
-                  onChangeText={handleChange("price")}
+                  onChangeText={handleChange("phoneNo")}
                   style={styles.loginInput}
-                  placeholder={"Price"}
+                  placeholder={"PhoneNumber"}
                   clearButtonMode="always"
-                  keyboardType={"email-description"}
-                  onBlur={() => setFieldTouched("price")}
+                  keyboardType={"email-address"}
+                  onBlur={() => setFieldTouched("phoneNo")}
                 />
               </View>
-              <ErrorMessage error={errors.price} visible={touched.price} />
+              <ErrorMessage error={errors.phoneNo} visible={touched.phoneNo} />
               <View style={styles.loginInputContainer}>
                 <Ionicons
                   style={{
@@ -141,29 +143,17 @@ function AddProduct({ navigation }) {
                   color="black"
                 />
                 <TextInput
-                  onChangeText={handleChange("description")}
+                  onChangeText={handleChange("address")}
                   style={styles.loginInput}
-                  placeholder={"Description"}
+                  placeholder={"Address"}
                   clearButtonMode="always"
                   numberOfLines={3}
                   multiline
                   keyboardType={"default"}
-                  onBlur={() => setFieldTouched("description")}
+                  onBlur={() => setFieldTouched("address")}
                 />
               </View>
-              <ErrorMessage
-           
-           
-           
-                            error={errors.description}
-      
-      
-      
-                                           visible={touched.description}
-              
-              
-              
-              />
+              <ErrorMessage error={errors.address} visible={touched.address} />
               <TouchableOpacity
                 // onPress={() => login()}
                 onPress={() => {
@@ -226,7 +216,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     backgroundColor: "white",
-    bottom: "18%",
+    bottom: 140,
     elevation: 40,
     shadowColor: "grey",
     shadowOpacity: 0.5,
@@ -262,4 +252,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddProduct;
+export default Check;
