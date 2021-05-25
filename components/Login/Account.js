@@ -13,9 +13,9 @@ const signOut = () => {
       // An error happened.
     });
 
-  AsyncStorage.setItem("Todo", JSON.stringify([])).then(() =>
-    console.log(value + "After Signout")
-  );
+  // AsyncStorage.setItem("Todo", JSON.stringify([])).then(() =>
+  //   console.log(value + "After Signout")
+  // );
 };
 
 function Account(props) {

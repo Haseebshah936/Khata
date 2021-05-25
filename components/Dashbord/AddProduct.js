@@ -32,7 +32,7 @@ function AddProduct({ navigation }) {
     "Cannot update state",
   ]);
   const [uri, setUri] = useState(
-    "https://assets.webiconspng.com/uploads/2016/11/account_avatar_male_man_person_profile_user_icon_434194-300x300.png"
+    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641"
   );
   const login = (values) => {
     console.log(values);
@@ -73,41 +73,50 @@ function AddProduct({ navigation }) {
               <View style={styles.loginTextContainer}>
                 <Text style={styles.loginText}>Add Product To Khata</Text>
               </View>
-              <TouchableOpacity
-                style={styles.profilePic}
-                activeOpacity={0.6}
-                onPress={() => addImage()}
-              >
-                <Image
-                  resizeMethod={"resize"}
-                  source={{
-                    width: 150,
-                    height: 150,
-                    uri: uri,
-                  }}
-                />
-              </TouchableOpacity>
-              <View style={styles.loginInputContainer}>
-                <Ionicons
-                  style={{
-                    alignSelf: "center",
-                    paddingLeft: 5,
-                    paddingRight: 5,
-                  }}
-                  name="person-outline"
-                  size={22}
-                  color="black"
-                />
-                <TextInput
-                  onChangeText={handleChange("name")}
-                  style={styles.loginInput}
-                  placeholder={"Product Name"}
-                  clearButtonMode="always"
-                  keyboardType={"default"}
-                  onBlur={() => setFieldTouched("name")}
-                />
+
+              <View style={styles.profileContainer}>
+                <TouchableOpacity
+                  style={styles.profilePic}
+                  activeOpacity={0.6}
+                  onPress={() => addImage()}
+                >
+                  <Image
+                    resizeMethod={"resize"}
+                    source={{
+                      width: 120,
+                      height: 120,
+                      uri: uri,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View style={{flex: 1 }}>
+                  <View style={styles.productContainer}>
+                    <Ionicons
+                      style={{
+                        alignSelf: "center",
+                        paddingLeft: 5,
+                        paddingRight: 5,
+                      }}
+                      name="cart-outline"
+                      size={22}
+                      color="black"
+                    />
+                    <TextInput
+                      onChangeText={handleChange("name")}
+                      style={styles.loginInput}
+                      placeholder={"Product Name"}
+                      clearButtonMode="always"
+                      keyboardType={"default"}
+                      onBlur={() => setFieldTouched("name")}
+                    />
+                  </View>
+                  <ErrorMessage
+                    error={errors.name}
+                    visible={touched.name}
+                    size={12}
+                  />
+                </View>
               </View>
-              <ErrorMessage error={errors.name} visible={touched.name} />
               <View style={styles.loginInputContainer}>
                 <Ionicons
                   style={{
@@ -115,7 +124,7 @@ function AddProduct({ navigation }) {
                     paddingLeft: 5,
                     paddingRight: 5,
                   }}
-                  name="person-outline"
+                  name="card-outline"
                   size={22}
                   color="black"
                 />
@@ -124,7 +133,7 @@ function AddProduct({ navigation }) {
                   style={styles.loginInput}
                   placeholder={"Price"}
                   clearButtonMode="always"
-                  keyboardType={"email-description"}
+                  keyboardType={"numeric"}
                   onBlur={() => setFieldTouched("price")}
                 />
               </View>
@@ -136,7 +145,7 @@ function AddProduct({ navigation }) {
                     paddingLeft: 5,
                     paddingRight: 5,
                   }}
-                  name="person-outline"
+                  name="bookmark-outline"
                   size={22}
                   color="black"
                 />
@@ -152,17 +161,8 @@ function AddProduct({ navigation }) {
                 />
               </View>
               <ErrorMessage
-           
-           
-           
-                            error={errors.description}
-      
-      
-      
-                                           visible={touched.description}
-              
-              
-              
+                error={errors.description}
+                visible={touched.description}
               />
               <TouchableOpacity
                 // onPress={() => login()}
@@ -204,6 +204,18 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
   },
+  profileContainer: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  productContainer: {
+    padding: 8,
+    flexDirection: "row",
+    backgroundColor: "#e9ebf5",
+    borderRadius: 20,
+    marginRight: "7%",
+  },
   wallpaper: {
     width: "100%",
     height: Dimensions.get("window").height / 3,
@@ -226,7 +238,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     backgroundColor: "white",
-    bottom: "18%",
+    bottom: "12%",
     elevation: 40,
     shadowColor: "grey",
     shadowOpacity: 0.5,
@@ -254,9 +266,9 @@ const styles = StyleSheet.create({
   },
   profilePic: {
     alignSelf: "center",
-    borderRadius: 100,
-    width: 150,
-    height: 150,
+    borderRadius: 20,
+    width: 120,
+    height: 120,
     overflow: "hidden",
     marginBottom: 20,
   },
