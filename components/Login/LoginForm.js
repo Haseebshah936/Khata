@@ -20,6 +20,7 @@ import { Formik } from "formik";
 import ErrorMessage from "./ErrorMessage";
 import { auth } from "../../firebase";
 import Constants from "expo-constants";
+import { Ionicons } from "@expo/vector-icons";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -58,8 +59,40 @@ function LoginForm({ navigation }) {
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
-      <Image style={styles.logo} source={require("../../assets/Logo.png")} />
-
+      {/* <Image style={styles.logo} source={require("../../assets/Logo.png")} /> */}
+      <View style={styles.loginTextContainer}>
+          <Text style={styles.loginText}>Login</Text>
+          <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20, 
+            backgroundColor: "#ff8800",
+            elevation: 12,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+            marginLeft: '50%',
+            marginRight: 20
+          }}/>
+          <View style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40, 
+            backgroundColor: "#ff8800",
+            elevation: 30,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+          }}/>
+      </View>
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values) => login(values)}
@@ -67,64 +100,81 @@ function LoginForm({ navigation }) {
       >
         {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
           <>
-            <View style={styles.searchBar}>
-              <Fontisto
-                style={styles.CovidLog}
-                name="email"
-                size={20}
+          <View style={styles.loginContainer}>
+            <View style={styles.loginInputContainer}>
+              <Ionicons
+                style={{
+                  alignSelf: "center",
+                  paddingRight: 5,
+                }}
+                name="person-outline"
+                size={22}
                 color="black"
               />
-              <View style={{ marginLeft: 45, marginRight: 10 }}>
-                <TextInput
-                  onChangeText={handleChange("email")}
-                  placeholder={"Email"}
-                  style={styles.searchBarText}
-                  clearButtonMode="always"
-                  keyboardType={"email-address"}
-                  onBlur={() => setFieldTouched("email")}
-                />
-              </View>
+              <TextInput
+                onChangeText={handleChange("email")}
+                style={styles.loginInput}
+                placeholder={"Email"}
+                clearButtonMode="always"
+                keyboardType={"email-address"}
+                onBlur={() => setFieldTouched("email")}
+              />
             </View>
             <ErrorMessage error={errors.email} visible={touched.email} />
-            <View style={styles.searchBar}>
-              <MaterialIcons
-                style={styles.CovidLog}
+            <View style={styles.loginInputContainer}>
+            <MaterialIcons
+                 style={{
+                  alignSelf: "center",
+                  paddingRight: 5,
+                }}
                 name="lock"
-                size={20}
+                size={22}
                 color="black"
               />
-              <View style={{ marginLeft: 45, marginRight: 10 }}>
-                <TextInput
-                  onChangeText={handleChange("password")}
-                  placeholder={"Password"}
-                  style={styles.searchBarText}
-                  clearButtonMode="always"
-                  secureTextEntry
-                  onBlur={() => setFieldTouched("password")}
-                />
-              </View>
+  
+              <TextInput
+                onChangeText={handleChange("password")}
+                style={styles.loginInput}
+                placeholder={"Password"}
+                clearButtonMode="always"
+                secureTextEntry
+                onBlur={() => setFieldTouched("password")}
+              />
             </View>
-            <ErrorMessage error={errors.password} visible={touched.email} />
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity
-                style={styles.login}
-                activeOpacity={0.6}
-                onPress={handleSubmit}
-              >
-                <Text style={styles.loginText}>Login</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.login}
-                activeOpacity={0.6}
-                onPress={() => navigation.navigate("Register")}
-              >
-                <Text style={styles.loginText}>Register</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
+            <ErrorMessage
+              error={errors.password}
+              visible={touched.password}
+            />
+          </View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#ff8800",
+                left: '60%',
+                paddingLeft: '10%',
+                marginTop: 30,
+                borderRadius: 25,
+                width: "60%",
+                marginBottom: '17%',
+                elevation: 5,
+                shadowColor: 'grey',
+                shadowOffset:{
+                  width: 5,
+                  height: 5
+                },
+                shadowOpacity: 0.5,
+                shadowRadius: 30,
+              }}
+              activeOpacity={1}
+            >
+              <Text onPress={() => {
+                handleSubmit();
+              }} style={{ color: "white", padding: 12, fontWeight: "bold" }}>
+                LOGIN
+              </Text>
+            </TouchableOpacity>        
+        </>
+      )}
       </Formik>
-
       <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={styles.googleLogin}
@@ -143,34 +193,56 @@ function LoginForm({ navigation }) {
         activeOpacity={0.6}
         onPress={() => anonymousSignin()}
       >
-        <FontAwesome
-     
-              style={styles.fbLogo}
- 
-                  name="facebook"
-   
-                size={18}
-     
-              color="white"
-       
-        />
+        <FontAwesome style={styles.fbLogo} name="facebook" size={18} color="white"/>
         <Text style={styles.fbText}>Sign in with facebook</Text>
       </TouchableOpacity>
       </View>
-
-      <StatusBar style={"auto"} />
+      <View style={[styles.loginTextContainer,{marginTop: '12%'}]}>
+      <View style={{
+          width: 80,
+          height: 80,
+          borderRadius: 40, 
+          backgroundColor: "#ff8800",
+          elevation: 30,
+          shadowColor: 'grey',
+          shadowOffset:{
+            width: 5,
+            height: 5
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 30,
+          left: '-70%'
+        }}/>
+          <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20, 
+            backgroundColor: "#ff8800",
+            elevation: 5,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+            right: '50%',
+          }}/>
+          <Text 
+            style={[styles.loginText,{marginLeft: '29%'}]}
+            onPress={() => navigation.navigate("Register")}
+          >Sign Up</Text>
+      </View>
+      <StatusBar style={"auto"} hidden/>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "lightyellow",
-    justifyContent: "center",
     width: "100%",
-    height: "100%",
+    flex: 1,
+    backgroundColor: "white",
   },
   logo: {
     marginTop: Constants.statusBarHeight,
@@ -194,7 +266,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   CovidLog: {
-    // height: 30,
     borderRadius: 15,
     justifyContent: "center",
     position: "absolute",
@@ -213,7 +284,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#474747",
   },
-
+  loginContainer: {
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: "white",
+    elevation: 20,
+    shadowColor: "grey",
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    padding: 20,
+  },
+  loginInputContainer: {
+    flexDirection: "row",
+    borderColor: "#ff8800",
+    borderBottomWidth: 1
+  },
+  loginInput: {
+    flex: 1,
+    padding: 5
+  },
+  loginTextContainer: {
+    flexDirection: "row",
+    alignItems: 'center',
+    marginLeft: 20,
+    margin: 20,
+    marginTop: '20%',
+    marginBottom: '25%'
+  },
+  loginText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    marginLeft: 5,
+    fontFamily: "monospace"
+  },
   login: {
     marginTop: 5,
     marginVertical: 10,
@@ -234,6 +337,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "space-between",
     borderRadius: 50,
+    elevation: 5,
+    shadowColor: 'grey',
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
+    shadowOffset:{
+      width: 5,
+      height: 5
+    }
   },
   fbLogin: {
     flexDirection: "row",
@@ -241,6 +352,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderRadius: 50,
     marginLeft: 20,
+    elevation: 5,
+    shadowColor: 'grey',
+    shadowOffset:{
+      width: 5,
+      height: 5
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
   },
   googleLogo: {
     width: 25,
@@ -260,7 +379,7 @@ const styles = StyleSheet.create({
     color: "#474747",
   },
   fbText: {
-    padding: 12,
+    padding: 13,
     alignSelf: "center",
     fontWeight: "bold",
     fontSize: 10,

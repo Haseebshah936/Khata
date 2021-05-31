@@ -18,6 +18,7 @@ import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import * as ImagePicker from "expo-image-picker";
+import Constants from 'expo-constants'
 import ErrorMessage from "../Login/ErrorMessage";
 
 const validationSchema = Yup.object().shape({
@@ -57,11 +58,44 @@ function AddProduct({ navigation }) {
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
-      <ImageBackground
+      {/* <ImageBackground
         source={require("../../assets/walpaper.jpg")}
         style={styles.wallpaper}
         resizeMode={"cover"}
-      />
+      /> */}
+      <View style={styles.loginTextContainer}>
+          <Text style={styles.loginText}>Add To Khata</Text>
+          <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20, 
+            backgroundColor: "#ff8800",
+            elevation: 10,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+            marginLeft: '16%',
+            marginRight: 20
+          }}/>
+          <View style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40, 
+            backgroundColor: "#ff8800",
+            elevation: 40,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+          }}/>
+      </View>
       <Formik
         initialValues={{ name: "", price: "", description: "" }}
         onSubmit={(values) => login(values)}
@@ -70,9 +104,6 @@ function AddProduct({ navigation }) {
         {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
           <>
             <View style={styles.loginContainer}>
-              <View style={styles.loginTextContainer}>
-                <Text style={styles.loginText}>Add Product To Khata</Text>
-              </View>
 
               <View style={styles.profileContainer}>
                 <TouchableOpacity
@@ -87,7 +118,7 @@ function AddProduct({ navigation }) {
                       height: 120,
                       uri: uri,
                     }}
-                  />
+                    />
                 </TouchableOpacity>
                 <View style={{flex: 1 }}>
                   <View style={styles.productContainer}>
@@ -151,7 +182,7 @@ function AddProduct({ navigation }) {
                 />
                 <TextInput
                   onChangeText={handleChange("description")}
-                  style={styles.loginInput}
+                  style={[styles.loginInput,{padding: 0, paddingLeft: 5}]}
                   placeholder={"Description"}
                   clearButtonMode="always"
                   numberOfLines={3}
@@ -164,30 +195,70 @@ function AddProduct({ navigation }) {
                 error={errors.description}
                 visible={touched.description}
               />
-              <TouchableOpacity
+            </View>
+      <TouchableOpacity
                 // onPress={() => login()}
                 onPress={() => {
                   handleSubmit();
                 }}
                 style={{
                   backgroundColor: "#ff8800",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  padding: 10,
-                  marginBottom: 5,
-                  borderRadius: 20,
-                  width: "50%",
+                  left: '60%',
+                  padding: 12,
+                  paddingLeft: '12%',
+                  marginTop: 30,
+                  borderRadius: 25,
+                  width: "60%",
+                  elevation: 5,
+                  shadowColor: 'grey',
+                  shadowOffset:{
+                    width: 5,
+                    height: 5
+                  },
+                  shadowOpacity: 0.5,
+                  shadowRadius: 30,
                 }}
-                activeOpacity={0.6}
+                activeOpacity={0.85}
               >
                 <Text style={{ color: "white", fontWeight: "bold" }}>
                   CREATE
                 </Text>
-              </TouchableOpacity>
-            </View>
+              </TouchableOpacity>        
           </>
         )}
       </Formik>
+      <View style={[styles.loginTextContainer,{marginTop: '5%'}]}>
+        <View style={{
+          width: 80,
+          height: 80,
+          borderRadius: 40, 
+          backgroundColor: "#ff8800",
+          elevation: 30,
+          shadowColor: 'grey',
+          shadowOffset:{
+            width: 5,
+            height: 5
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 30,
+          left: '-75%'
+        }}/>
+          <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20, 
+            backgroundColor: "#ff8800",
+            elevation: 10,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+            right: '50%',
+          }}/>
+      </View>
       <StatusBar hidden style={"inverted"} />
     </Pressable>
   );
@@ -196,13 +267,14 @@ function AddProduct({ navigation }) {
 const styles = StyleSheet.create({
   container1: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
   },
   container: {
     width: "100%",
     flex: 1,
+    backgroundColor: "white",
   },
   profileContainer: {
     flexDirection: "row-reverse",
@@ -210,15 +282,27 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   productContainer: {
-    padding: 8,
     flexDirection: "row",
-    backgroundColor: "#e9ebf5",
-    borderRadius: 20,
-    marginRight: "7%",
+    borderColor: "#ff8800",
+    borderBottomWidth: 1
   },
   wallpaper: {
     width: "100%",
     height: Dimensions.get("window").height / 3,
+  },
+  loginTextContainer: {
+    flexDirection: "row",
+    alignItems: 'center',
+    marginLeft: 20,
+    margin: 20,
+    marginTop: '15%',
+    marginBottom: '10%'
+  },
+  loginText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    marginLeft: 5,
+    fontFamily: "monospace"
   },
   textContainer: {
     position: "absolute",
@@ -238,31 +322,20 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     backgroundColor: "white",
-    bottom: "12%",
-    elevation: 40,
+    elevation: 20,
     shadowColor: "grey",
     shadowOpacity: 0.5,
     shadowRadius: 1,
     padding: 20,
   },
-  loginTextContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  loginText: {
-    fontSize: 19,
-    fontWeight: "bold",
-  },
   loginInputContainer: {
-    padding: 8,
     flexDirection: "row",
-    backgroundColor: "#e9ebf5",
-    // marginBottom: 20,
-    borderRadius: 20,
+    borderColor: "#ff8800",
+    borderBottomWidth: 1
   },
   loginInput: {
     flex: 1,
+    padding: 5
   },
   profilePic: {
     alignSelf: "center",
@@ -273,5 +346,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
 
 export default AddProduct;

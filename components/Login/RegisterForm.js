@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   View,
   StyleSheet,
@@ -10,44 +10,48 @@ import {
   Keyboard,
   Pressable,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
-
 import { Formik } from "formik";
 import ErrorMessage from "./ErrorMessage";
 import { auth } from "../../firebase";
 import Constants from "expo-constants";
+import * as ImagePicker from "expo-image-picker";
 
 const validationSchema = Yup.object().shape({
   userName: Yup.string().required().label("User Name"),
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().required().min(8).label("Password"),
+  phoneNo: Yup.number().required().label("Phone Number"),
 });
 
 function RegisterForm({ navigation }) {
-  const register = (values) => {
-    auth
+  const [uri, setUri] = useState(
+    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641"
+    );
+    const register = (values) => {
+      auth
       .createUserWithEmailAndPassword(values.email, values.password)
       .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
         user
-          .updateProfile({
-            displayName: values.userName,
-            photoURL: "https://example.com/jane-q-user/profile.jpg",
-          })
-          .then(function () {
-            // Update successful.
-          })
-          .catch(function (error) {
-            // An error happened.
-          });
-          // ...
-          navigation.popToTop()
+        .updateProfile({
+          displayName: values.userName,
+          photoURL: uri,
+        })
+        .then(function () {
+          // Update successful.
+        })
+        .catch(function (error) {
+          // An error happened.
+        });
+        // ...
+        navigation.popToTop()
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -55,116 +59,248 @@ function RegisterForm({ navigation }) {
         alert(errorMessage)
         // ..
       });
-  };
-
-  return (
-    <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
-      <Image style={styles.logo} source={require("../../assets/Logo.png")} />
-
+    };
+    
+    const addImage = async () => {
+      console.log("Add Image");
+      // let result = await ImagePicker.launchImageLibraryAsync();
+      let result = await ImagePicker.launchCameraAsync();
+      if (!result.cancelled) {
+        setUri(result.uri);
+      }
+    };
+    return (
+      <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
+      <View style={styles.loginTextContainer}>
+          <Text style={styles.loginText}>Create Khata</Text>
+          <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20, 
+            backgroundColor: "#ff8800",
+            elevation: 10,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+            marginLeft: '16%',
+            marginRight: 20
+          }}/>
+          <View style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40, 
+            backgroundColor: "#ff8800",
+            elevation: 40,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+          }}/>
+      </View>
       <Formik
-        initialValues={{ userName: "", email: "", password: "" }}
+        initialValues={{ userName: "", email: "", password: "", phoneNo: "", address: "" }}
         onSubmit={(values) => register(values)}
         validationSchema={validationSchema}
       >
         {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
           <>
-            <View style={styles.searchBar}>
-              <Fontisto
-                style={styles.CovidLog}
-                name="person"
-                size={24}
-                color="black"
-              />
-              <View style={{ marginLeft: 45, marginRight: 10 }}>
+            <View style={styles.loginContainer}>
+              <View style={styles.profileContainer}>
+                <TouchableOpacity
+                  style={styles.profilePic}
+                  activeOpacity={0.6}
+                  onPress={() => addImage()}
+                >
+                  <Image
+                    resizeMethod={"resize"}
+                    source={{
+                      width: 120,
+                      height: 120,
+                      uri: uri,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View style={{flex: 1 }}>
+                  <View style={styles.productContainer}>
+                    <Ionicons
+                      style={{
+                        alignSelf: "center",
+                        paddingRight: 5,
+                      }}
+                      name="person-outline"
+                      size={22}
+                      color="black"
+                    />
+                    <TextInput
+                      onChangeText={handleChange("userName")}
+                      style={styles.loginInput}
+                      placeholder={"User Name"}
+                      clearButtonMode="always"
+                      keyboardType={"default"}
+                      onBlur={() => setFieldTouched("userName")}
+                    />
+                  </View>
+                  <ErrorMessage
+                    error={errors.userName}
+                    visible={touched.userName}
+                    size={12}
+                  />
+                </View>
+              </View>
+              <View style={styles.loginInputContainer}>
+                <Ionicons
+                  style={{
+                    alignSelf: "center",
+                    paddingRight: 5,
+                  }}
+                  name="call-outline"
+                  size={22}
+                  color="black"
+                />
                 <TextInput
-                  onChangeText={handleChange("userName")}
-                  placeholder={"User Name"}
-                  style={styles.searchBarText}
+                  onChangeText={handleChange("phoneNo")}
+                  style={styles.loginInput}
+                  placeholder={"PhoneNumber"}
                   clearButtonMode="always"
-                  keyboardType={"default"}
-                  onBlur={() => setFieldTouched("userName")}
+                  keyboardType={"phone-pad"}
+                  onBlur={() => setFieldTouched("phoneNo")}
                 />
               </View>
-            </View>
-            <ErrorMessage error={errors.userName} visible={touched.userName} />
-            <View style={styles.searchBar}>
-              <Fontisto
-                style={styles.CovidLog}
-                name="email"
-                size={24}
-                color="black"
-              />
-              <View style={{ marginLeft: 45, marginRight: 10 }}>
+              <ErrorMessage error={errors.phoneNo} visible={touched.phoneNo} />
+              <View style={styles.loginInputContainer}>
+                <Ionicons
+                  style={{
+                    alignSelf: "center",
+                    paddingRight: 5,
+                  }}
+                  name="person-outline"
+                  size={22}
+                  color="black"
+                />
                 <TextInput
                   onChangeText={handleChange("email")}
+                  style={styles.loginInput}
                   placeholder={"Email"}
-                  style={styles.searchBarText}
                   clearButtonMode="always"
                   keyboardType={"email-address"}
                   onBlur={() => setFieldTouched("email")}
                 />
               </View>
-            </View>
-            <ErrorMessage error={errors.email} visible={touched.email} />
-            <View style={styles.searchBar}>
+              <ErrorMessage error={errors.email} visible={touched.email} />
+              <View style={styles.loginInputContainer}>
               <MaterialIcons
-                style={styles.CovidLog}
-                name="lock"
-                size={24}
-                color="black"
-              />
-              <View style={{ marginLeft: 45, marginRight: 10 }}>
+                  style={{
+                    alignSelf: "center",
+                    paddingRight: 5,
+                  }}
+                  name="lock"
+                  size={22}
+                  color="black"
+                />
+    
                 <TextInput
                   onChangeText={handleChange("password")}
+                  style={styles.loginInput}
                   placeholder={"Password"}
-                  style={styles.searchBarText}
                   clearButtonMode="always"
                   secureTextEntry
                   onBlur={() => setFieldTouched("password")}
                 />
               </View>
+              <ErrorMessage
+                error={errors.password}
+                visible={touched.password}
+              />
             </View>
-            <ErrorMessage error={errors.password} visible={touched.email} />
             <TouchableOpacity
-              style={styles.login}
-              activeOpacity={0.6}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.loginText}>Register</Text>
-            </TouchableOpacity>
-
-            {
-              <Text
-                style={{ textDecorationLine: "underline" }}
-                onPress={() => navigation.navigate("Login")}
+                // onPress={() => login()}
+                
+                style={{
+                  backgroundColor: "#ff8800",
+                  left: '60%',
+                  padding: 12,
+                  paddingLeft: '12%',
+                  marginTop: 30,
+                  borderRadius: 25,
+                  width: "60%",
+                  elevation: 5,
+                  shadowColor: 'grey',
+                  shadowOffset:{
+                    width: 5,
+                    height: 5
+                  },
+                  shadowOpacity: 0.5,
+                  shadowRadius: 30,
+                  marginBottom: '4%'
+                }}
+                activeOpacity={1}
               >
-                Go To Login
-              </Text>
-            }
+                <Text onPress={() => {
+                    handleSubmit();
+                  }} 
+                  style={{ color: "white", fontWeight: "bold" }}
+                >
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
           </>
         )}
       </Formik>
-
-      <StatusBar style={"auto"} />
+      <Text
+        style={{ textDecorationLine: "underline", alignSelf: 'center' }}
+        onPress={() => navigation.navigate("Login")}
+      >
+          Go To Login
+      </Text>
+      <View style={[styles.loginTextContainer,{marginTop: "1%"}]}>
+        <View style={{
+          width: 80,
+          height: 80,
+          borderRadius: 40, 
+          backgroundColor: "#ff8800",
+          elevation: 30,
+          shadowColor: 'grey',
+          shadowOffset:{
+            width: 5,
+            height: 5
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 30,
+          left: '-75%'
+        }}/>
+          <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20, 
+            backgroundColor: "#ff8800",
+            elevation: 10,
+            shadowColor: 'grey',
+            shadowOffset:{
+              width: 5,
+              height: 5
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 30,
+            right: '50%',
+          }}/>
+      </View>
+      <StatusBar style={"auto"} hidden/>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "lightyellow",
-    justifyContent: "center",
     width: "100%",
-    height: "100%",
-  },
-  logo: {
-    marginTop: Constants.statusBarHeight,
-    width: 200,
-    height: 120,
-    marginBottom: 30,
-    marginLeft: 50,
+    flex: 1,
+    backgroundColor: "white",
   },
   searchBar: {
     width: "90%",
@@ -180,55 +316,65 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 16,
   },
-  CovidLog: {
-    height: 30,
-    borderRadius: 15,
-    justifyContent: "center",
-    position: "absolute",
-    left: 15,
-    alignSelf: "center",
-    width: 40,
-    flex: 0.5,
+  profileContainer: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  countriesData: {
-    marginBottom: 15,
+  productContainer: {
+    flexDirection: "row",
+    borderColor: "#ff8800",
+    borderBottomWidth: 1
+  },
+  loginTextContainer: {
+    flexDirection: "row",
+    alignItems: 'center',
+    marginLeft: 20,
+    margin: 20,
+    marginTop: '12%',
+    marginBottom: '7%'
   },
   loginText: {
-    padding: 10,
-    alignSelf: "center",
+    fontSize: 25,
     fontWeight: "bold",
-    fontSize: 18,
-    color: "#474747",
+    marginLeft: 5,
+    fontFamily: "monospace"
   },
-
-  login: {
-    marginTop: 5,
-    marginVertical: 10,
-    backgroundColor: "pink",
-    borderRadius: 50,
-    width: Dimensions.get("window").width * 0.5,
-    marginBottom: 30,
+  textContainer: {
+    position: "absolute",
+    padding: 20,
+    marginTop: 20,
   },
-  googleLogin: {
-    flexDirection: "row",
-    width: Dimensions.get("window").width * 0.85,
+  text: {
+    fontSize: 12,
+    color: "white",
+  },
+  loginContainer: {
+    marginLeft: 20,
+    marginRight: 20,
     backgroundColor: "white",
-    justifyContent: "space-between",
-    borderRadius: 50,
+    elevation: 20,
+    shadowColor: "grey",
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    padding: 20,
   },
-  googleLogo: {
-    width: 36,
-    height: 36,
-    alignSelf: "center",
-    marginLeft: 25,
+  loginInputContainer: {
+    flexDirection: "row",
+    borderColor: "#ff8800",
+    borderBottomWidth: 1
   },
-  googleText: {
-    padding: 14,
+  loginInput: {
+    flex: 1,
+    padding: 5
+  },
+  profilePic: {
     alignSelf: "center",
-    fontWeight: "bold",
-    fontSize: 16,
-    color: "#474747",
-    marginRight: 50,
+    borderRadius: 20,
+    width: 120,
+    height: 120,
+    overflow: "hidden",
+    marginBottom: 20,
   },
 });
 export default RegisterForm;

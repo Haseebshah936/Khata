@@ -59,11 +59,12 @@ function UserData({ navigation }) {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://reqres.in/api/users?page=2")
+    const unsubscribe = fetch("https://reqres.in/api/users?page=2")
       .then((response) => response.json())
       .then((json) => setData(json.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
+    // return unsubscribe;
   }, []);
 
   return (
