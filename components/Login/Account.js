@@ -3,22 +3,21 @@ import React from "react";
 import { View, StyleSheet, Button } from "react-native";
 import { auth } from "../../firebase";
 
-const signOut = () => {
-  auth
-    .signOut()
-    .then(() => {
-      navigation.replace("Login");
-    })
-    .catch((error) => {
-      // An error happened.
-    });
+function Account({ navigation }) {
+  const signOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace("Login");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
 
-  // AsyncStorage.setItem("Todo", JSON.stringify([])).then(() =>
-  //   console.log(value + "After Signout")
-  // );
-};
-
-function Account(props) {
+    // AsyncStorage.setItem("Todo", JSON.stringify([])).then(() =>
+    //   console.log(value + "After Signout")
+    // );
+  };
   return (
     <View>
       <Button title={"SignOut"} onPress={signOut} />

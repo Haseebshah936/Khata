@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Button, View } from "react-native";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import AppNavigator from './AppNavigator';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import AppNavigator from "./AppNavigator";
 import index from "../TodoFireStore";
 import Account from "../Login/Account";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AddKhataButton from "./AddKhataButton";
 import AddKhata from "../Dashbord/AddKhata";
 
