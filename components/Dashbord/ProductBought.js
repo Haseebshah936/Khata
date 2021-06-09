@@ -9,27 +9,41 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 
-function ProductBought({ avatar, name, phoneNo, amountToPay, onPress }) {
+function ProductBought({
+  avatar,
+  name,
+  phoneNo,
+  amountToPay,
+  onPress,
+  renderRightActions,
+}) {
   let amountToPay1 = 10000;
   return (
-    <TouchableOpacity activeOpacity={0.6} style={styles.data} onPress={onPress}>
-      <Image
-        style={{ borderRadius: 30 }}
-        source={{ width: 60, height: 60, uri: avatar }}
-      />
-      <View style={styles.textContainer}>
-        <View style={styles.subTextContainer}>
-          <Text style={styles.text}>{name} </Text>
-          <Text style={styles.toPay}>AmountToPay </Text>
+    <Swipeable renderRightActions={renderRightActions}>
+      <TouchableOpacity
+        activeOpacity={0.6}
+        style={styles.data}
+        onPress={onPress}
+      >
+        <Image
+          style={{ borderRadius: 30 }}
+          source={{ width: 60, height: 60, uri: avatar }}
+        />
+        <View style={styles.textContainer}>
+          <View style={styles.subTextContainer}>
+            <Text style={styles.text}>{name} </Text>
+            <Text style={styles.toPay}>AmountToPay </Text>
+          </View>
+          <View style={styles.subTextContainer}>
+            <Text style={styles.text}>03324298364</Text>
+            <Text style={styles.toPay}>{amountToPay1} /-Rs</Text>
+          </View>
+          {/* <Text style={styles.email}> {amountToPay}</Text> */}
         </View>
-        <View style={styles.subTextContainer}>
-          <Text style={styles.text}>03324298364</Text>
-          <Text style={styles.toPay}>{amountToPay1} /-Rs</Text>
-        </View>
-        {/* <Text style={styles.email}> {amountToPay}</Text> */}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 

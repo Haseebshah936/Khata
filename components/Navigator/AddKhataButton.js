@@ -17,12 +17,12 @@ function AddKhataButton({ onPress }) {
 const styles = StyleSheet.create({
   addButton: {
     // position: 'absolute',
-    backgroundColor: "red",
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    bottom: 15,
-    borderWidth: 10,
+    backgroundColor: "#ff8800",
+    width: 76,
+    height: 76,
+    borderRadius: 40,
+    bottom: 22,
+    borderWidth: 8,
     borderColor: "white",
     justifyContent: "center",
     alignItems: "center",

@@ -16,6 +16,10 @@ const styles = StyleSheet.create({
     shadowColor: "grey",
     shadowOpacity: 0.5,
     shadowRadius: 1,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
     padding: 20,
   },
   loginInputContainer: {
@@ -200,6 +204,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 70,
     fontFamily: "monospace",
+    textDecorationLine: "underline",
+    textDecorationColor: "#ff8800",
+    elevation: 10,
   },
   profileContainer: {
     flexDirection: "row-reverse",

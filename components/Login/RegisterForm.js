@@ -22,6 +22,7 @@ import { auth } from "../../firebase";
 import Constants from "expo-constants";
 import * as ImagePicker from "expo-image-picker";
 import styles from "../Style/stylesRegister";
+import { useIsFocused } from "@react-navigation/core";
 
 const validationSchema = Yup.object().shape({
   userName: Yup.string().required().label("User Name"),
@@ -30,20 +31,27 @@ const validationSchema = Yup.object().shape({
   phoneNo: Yup.number().required().label("Phone Number"),
 });
 
+const hold =
+  "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
+
 function RegisterForm({ navigation }) {
-  const [uri, setUri] = useState(
-    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641"
-  );
+  const [uri, setUri] = useState(hold);
   const register = (values) => {
     auth
       .createUserWithEmailAndPassword(values.email, values.password)
       .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
+        let url = "";
+        if (uri !== hold) {
+          console.log(uri);
+          url = uri;
+        }
         user
           .updateProfile({
             displayName: values.userName,
-            photoURL: uri,
+            photoURL: url,
+            phoneNumber: values.phoneNo,
           })
           .then(function () {
             // Update successful.
@@ -63,7 +71,10 @@ function RegisterForm({ navigation }) {
 
   const addImage = async () => {
     console.log("Add Image");
-    let result = await ImagePicker.launchCameraAsync();
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.2,
+    });
     if (!result.cancelled) {
       setUri(result.uri);
     }
@@ -215,7 +226,11 @@ function RegisterForm({ navigation }) {
         <View style={styles.loginTextBottomContainerSmallCircle} />
         <Text
           style={[styles.signupText]}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => {
+            navigation.navigate("Login");
+            console.log(Dimensions.get("window").height);
+            console.log(Dimensions.get("screen").height);
+          }}
         >
           Login
         </Text>

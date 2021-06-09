@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 
 const stylesRegister = StyleSheet.create({
@@ -16,6 +16,10 @@ const stylesRegister = StyleSheet.create({
     shadowColor: "grey",
     shadowOpacity: 0.5,
     shadowRadius: 1,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
     padding: 13,
   },
   loginInputContainer: {
@@ -177,8 +181,10 @@ const stylesRegister = StyleSheet.create({
   signupText: {
     fontSize: 25,
     fontWeight: "bold",
-    marginLeft: 100,
+    marginLeft: 90,
     fontFamily: "monospace",
+    textDecorationLine: "underline",
+    top: 5,
   },
   profileContainer: {
     flexDirection: "row-reverse",

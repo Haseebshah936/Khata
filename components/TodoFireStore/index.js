@@ -10,6 +10,7 @@ import {
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import Constants from "expo-constants";
 import { Fontisto } from "@expo/vector-icons";
@@ -20,6 +21,7 @@ import Task from "../Todo/Task";
 import RenderRightAction from "../Todo/RenderRightAction";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
+import { useRef } from "react";
 
 function index({ navigation }) {
   const [data, setData] = useState([]);
@@ -28,31 +30,30 @@ function index({ navigation }) {
   const [fetched, setFetched] = useState(false);
   const [userId, setUserID] = useState("");
   const [loading, setLoading] = useState(false);
-  const addTodo =async () => {
-    // setData([...data, { todo: task }]);
+  const [url, setUrl] = useState("");
+  const [clicked, setClicked] = useState(false);
+
+  const yourRef = useRef(null);
+
+  const addTodo = async () => {
     let id;
-    // var uid = userId + "/";
-    // console.log(uid);
     if (fetched && task !== "") {
-      console.log("AddTodo" + data)
-      if ( data.length == 0) {
+      console.log("AddTodo" + data);
+      if (data.length == 0) {
         id = 0;
       } else {
         id = data[data.length - 1].key + 1;
       }
-      let url = await storage.ref().child("Images/" + userId + "/" + id).getDownloadURL();
-      if(url === ""){
-        url = "https://example.com/jane-q-user/profile.jpg"
-      }
       db.collection(userId)
-        .doc(id.toString())
-        .set({
+        .add({
           key: id,
           todo: task,
           avatar: url,
         })
         .then(() => {
           console.log("User added!");
+          setClicked(false);
+          setUrl("");
         });
       // setTask("");
       setAdded(added + 1);
@@ -64,21 +65,38 @@ function index({ navigation }) {
   const remove = (key) => {
     // console.log(key)
     var uid = userId + "/";
+    console.log(key);
+    let l;
     db.collection(userId)
-      .doc(key.toString())
-      .delete()
-      .then(() => {
-        console.log("User deleted!");
-      });
-    storage
-      .ref()
-      .child("Images/" + uid + key)
-      .delete()
-      .then(() => {
-        console.log("File Deleted");
+      .where("key", "==", key)
+      .get()
+      .then((querySnapshot) => {
+        console.log(querySnapshot.size);
+        querySnapshot.forEach((documentSnapshot) => (l = documentSnapshot.id));
+        console.log(l);
       })
-      .catch((error) => console.log(error));
-    setAdded(added + 1);
+      .then(() => {
+        if (l) {
+          db.collection(userId)
+            .doc(l)
+            .delete()
+            .then(() => {
+              console.log("User deleted!");
+            });
+
+          storage
+            .ref()
+            .child("Images/" + uid + key)
+            .delete()
+            .then(() => {
+              console.log("File Deleted");
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setAdded(added + 1);
+            });
+        }
+      });
   };
 
   async function getUserID() {
@@ -136,10 +154,10 @@ function index({ navigation }) {
       .catch((error) => {
         // An error happened.
       });
-    getData().then((value) => {
+    getData().then(async (value) => {
       console.log(value + "Before Signout");
       if (value) {
-        AsyncStorage.setItem("Todo", JSON.stringify([])).then(() =>
+        await AsyncStorage.setItem("Todo", JSON.stringify([])).then(() =>
           console.log(value + "After Signout")
         );
       }
@@ -147,25 +165,37 @@ function index({ navigation }) {
   };
 
   const addImage = async () => {
-    console.log("Add Image");
+    // console.log("Add Image");
+    // setUrl("")
+    setClicked(true);
     let id;
     // console.log(uid);
     if (fetched && task !== "") {
-      console.log("Add Image" + data)
+      // console.log("Add Image" + data);
       if (data.length == 0) {
         id = 0;
       } else {
         id = data[data.length - 1].key + 1;
       }
-      let result = await ImagePicker.launchImageLibraryAsync();
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.2,
+      });
       // let result = await ImagePicker.launchCameraAsync();
       if (!result.cancelled) {
         // setImage(result.uri);
-        uploadImage(result.uri, id).catch((error) => console.log(error));
+        setClicked(true);
+        uploadImage(result.uri, id)
+          .catch((error) => console.log(error))
+          .then((p) => {
+            console.log(p);
+            setUrl(p);
+            setClicked(false);
+          });
       }
       // setTask("");
     } else if (task === "") {
-       alert("Enter a Task to Add");
+      alert("Enter a Task to Add");
     }
   };
 
@@ -173,8 +203,8 @@ function index({ navigation }) {
     const response = await fetch(uri);
     const blob = await response.blob();
     let ref = storage.ref().child("Images/" + userId + "/" + id);
-    // setImage(null);
-    ref.put(blob)
+    await ref.put(blob);
+    return ref.getDownloadURL();
   };
 
   // const getCamerPermission = async () => {
@@ -193,44 +223,47 @@ function index({ navigation }) {
 
   useEffect(() => {
     let unsubscribe;
-    getData()
-      .then((value) => {
-          console.log(value + "Before storing data");
-          if (value != null && data.length === 0) {
-            setData(JSON.parse(value));
-            // console.log(value + "Value");
-            console.log(JSON.parse(value) + "Inside the json loadup");
-            // console.log(JSON.stringify(data) + "DATA 114");
-            setFetched(true);
-          }
-        }).then(() =>
-        getUserID()
-          .then((uid) => {
-            setUserID(uid);
-            console.log("Inside UseEffect" + userId);
-            unsubscribe = db
-              .collection(uid)
-              .get()
-              .then((querySnapshot) => {
-                console.log("Total users: ", querySnapshot.size);
-                if (querySnapshot.size != 0) {
-                  let array = [];
-                  querySnapshot.forEach((documentSnapshot) =>
-                    array.push(documentSnapshot.data())
-                  );
-                  console.log("Data Fetched" + array);
-                  setData(array);
-                } else {
-                  setData([]);
-                }
-              });
-            console.log("Ueffect" + data);
-            AsyncStorage.setItem("Todo", JSON.stringify(data));
-            setFetched(true);
-          })
-          .catch((error) => console.warn(error))
-        )  
-    // return unsubscribe();
+    if (added === 0) {
+      getData().then((value) => {
+        console.log(value + "Before storing data");
+        if (value != null && data.length === 0) {
+          setData(JSON.parse(value));
+          // console.log(value + "Value");
+          console.log(JSON.parse(value) + "Inside the json loadup");
+          // console.log(JSON.stringify(data) + "DATA 114");
+          setFetched(true);
+        }
+      });
+    }
+
+    getUserID()
+      .then(async (uid) => {
+        setUserID(uid);
+        console.log("Inside UseEffect" + userId);
+        unsubscribe = db
+          .collection(uid)
+          .orderBy("key", "asc")
+          .get()
+          .then((querySnapshot) => {
+            console.log("Total users: ", querySnapshot.size);
+            if (querySnapshot.size != 0) {
+              let array = [];
+              querySnapshot.forEach((documentSnapshot) =>
+                array.push(documentSnapshot.data())
+              );
+              console.log("Data Fetched" + array);
+              setData(array);
+            } else {
+              setData([]);
+            }
+          });
+        console.log("Ueffect" + data);
+        await AsyncStorage.setItem("Todo", JSON.stringify(data));
+        setFetched(true);
+      })
+      .catch((error) => console.warn(error));
+
+    return unsubscribe;
   }, [added]);
 
   return (
@@ -266,12 +299,20 @@ function index({ navigation }) {
           alignSelf: "center",
         }}
         activeOpacity={0.5}
-        onPress={() => {
-          addTodo();
-          Keyboard.dismiss();
-        }}
       >
-        <Text>Add</Text>
+        {clicked ? (
+          <ActivityIndicator size={"small"} color={"white"} />
+        ) : (
+          <Text
+            onPress={() => {
+              addTodo();
+              Keyboard.dismiss();
+              setClicked(true);
+            }}
+          >
+            Add
+          </Text>
+        )}
       </TouchableOpacity>
       <TouchableOpacity
         style={{
@@ -291,7 +332,7 @@ function index({ navigation }) {
       >
         <Text>Add Image</Text>
       </TouchableOpacity>
-      {/* <Button title={"SignOut"} onPress={signOut} /> */}
+      <Button title={"SignOut"} onPress={signOut} />
       {!fetched ? (
         <ActivityIndicator
           style={{ marginTop: 20 }}
@@ -301,7 +342,12 @@ function index({ navigation }) {
       ) : (
         <FlatList
           data={data}
-          style={{ flex: 1, backgroundColor: "white", marginTop: 20 }}
+          style={{
+            flexGrow: 1,
+            backgroundColor: "white",
+            marginTop: 20,
+            paddingBottom: 10,
+          }}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <Task
@@ -320,6 +366,9 @@ function index({ navigation }) {
             setLoading(false);
             setAdded(added + 1);
           }}
+          // ref={yourRef}
+          // onContentSizeChange={() => yourRef.current.scrollToEnd()}
+          // onLayout={() => yourRef.current.scrollToEnd()}
         />
       )}
     </View>

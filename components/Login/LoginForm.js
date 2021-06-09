@@ -14,9 +14,23 @@ import * as Yup from "yup";
 import { FontAwesome } from "@expo/vector-icons";
 import { Formik } from "formik";
 import ErrorMessage from "./ErrorMessage";
-import { auth } from "../../firebase";
+import * as Facebook from "expo-facebook";
+import * as Google from "expo-google-app-auth";
+
+import { auth, fbAuthProvider, googleAuthProvider } from "../../firebase";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../Style/styles";
+import {
+  androidClientIdGoogle,
+  appIdFb,
+  iosClientIdGoogle,
+} from "../../APIKeys";
+import {
+  loginWithEmail,
+  loginWithFacebook,
+  loginWithGoogle,
+} from "../redux/Actions";
+import { useDispatch } from "react-redux";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -24,21 +38,22 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginForm({ navigation }) {
-  const login = (values) => {
-    auth
-      .signInWithEmailAndPassword(values.email, values.password)
-      .then((userCredential) => {
-        // Signed in
-        var user = userCredential.user;
-        navigation.replace("Main");
-        // ...
-      })
-      .catch((error) => {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(errorMessage + "Line 42");
-      });
-  };
+  const dispatch = useDispatch();
+  // const login = (values) => {
+  //   auth
+  //     .signInWithEmailAndPassword(values.email, values.password)
+  //     .then((userCredential) => {
+  //       // Signed in
+  //       var user = userCredential.user;
+  //       navigation.replace("Main");
+  //       // ...
+  //     })
+  //     .catch((error) => {
+  //       var errorCode = error.code;
+  //       var errorMessage = error.message;
+  //       alert(errorMessage + "Line 42");
+  //     });
+  // };
   const anonymousSignin = () => {
     auth
       .signInAnonymously()
@@ -54,6 +69,64 @@ function LoginForm({ navigation }) {
       });
   };
 
+  // const loginWithFacebook = async () => {
+  //   try {
+  //     await Facebook.initializeAsync({
+  //       appId: appIdFb,
+  //     });
+  //     const { type, token, expirationDate, permissions, declinedPermissions } =
+  //       await Facebook.logInWithReadPermissionsAsync({
+  //         permissions: ["public_profile"],
+  //       });
+
+  //     if (type === "success") {
+  //       // Build Firebase credential with the Facebook access token.
+  //       const credential = fbAuthProvider.credential(token);
+
+  //       // Sign in with credential from the Facebook user.
+  //       auth.signInWithCredential(credential).catch(console.log); // Handle Errors here.
+  //     } else {
+  //       alert("Facebook App not installed");
+  //     }
+  //   } catch ({ message }) {
+  //     alert(`Facebook Login Error: ${message}`);
+  //   }
+  // };
+
+  // const loginWithGoogle = async () => {
+  //   try {
+  //     const result = await Google.logInAsync({
+  //       androidClientId: androidClientIdGoogle,
+  //       iosClientId: iosClientIdGoogle,
+  //       behavior: "web",
+  //       scopes: ["profile", "email"],
+  //     });
+
+  //     if (result.type === "success") {
+  //       const credential = googleAuthProvider.credential(
+  //         result.idToken,
+  //         result.accessToken
+  //       );
+  //       auth.signInWithCredential(credential).catch(console.log);
+  //     } else {
+  //       alert("Google Login Cancelled");
+  //     }
+  //   } catch (e) {
+  //     alert(`Google Login Error: ${e}`);
+  //   }
+  // };
+
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged((user) => {
+      if (user != null) {
+        console.log("We are authenticated now!");
+        console.log(user);
+        navigation.replace("Main");
+      }
+    });
+    return unsub;
+  });
+
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
       {/* <Image style={styles.logo} source={require("../../assets/Logo.png")} /> */}
@@ -67,7 +140,9 @@ function LoginForm({ navigation }) {
       <View>
         <Formik
           initialValues={{ email: "", password: "" }}
-          onSubmit={(values) => login(values)}
+          onSubmit={(values) =>
+            dispatch(loginWithEmail(values.email, values.password))
+          }
           validationSchema={validationSchema}
         >
           {({
@@ -122,6 +197,7 @@ function LoginForm({ navigation }) {
                 <Text
                   onPress={() => {
                     handleSubmit();
+                    Keyboard.dismiss();
                   }}
                   style={styles.submitButtonText}
                 >
@@ -136,7 +212,7 @@ function LoginForm({ navigation }) {
         <TouchableOpacity
           style={styles.googleLogin}
           activeOpacity={0.6}
-          onPress={() => anonymousSignin()}
+          onPress={() => dispatch(loginWithGoogle())}
         >
           <Image
             style={styles.googleLogo}
@@ -148,7 +224,7 @@ function LoginForm({ navigation }) {
         <TouchableOpacity
           style={styles.fbLogin}
           activeOpacity={0.6}
-          onPress={() => anonymousSignin()}
+          onPress={() => dispatch(loginWithFacebook())}
         >
           <FontAwesome
             style={styles.fbLogo}

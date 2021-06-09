@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { useDispatch } from "react-redux";
 import { auth } from "../../firebase";
+import { loginOffline } from "../redux/Actions";
 function LoadingScreen({ navigation }) {
+  const dispatch = useDispatch();
   useEffect(() => {
     const subscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -16,6 +19,7 @@ function LoadingScreen({ navigation }) {
         navigation.replace("Login");
       }
     });
+    dispatch(loginOffline());
     return subscribe;
   }, []);
   return (

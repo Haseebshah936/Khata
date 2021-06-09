@@ -20,6 +20,14 @@ import * as Yup from "yup";
 import * as ImagePicker from "expo-image-picker";
 import ErrorMessage from "../Login/ErrorMessage";
 import styles from "../Style/stylesRegister";
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded,
+  setTestDeviceIDAsync,
+} from "expo-ads-admob";
+import { android, ios } from "../../APIKeys";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Product Name"),
@@ -32,6 +40,8 @@ function AddProduct({ navigation }) {
     "Setting a timer for a long period of time",
     "Cannot update state",
   ]);
+  const bannerID =
+    Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const [uri, setUri] = useState(
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641"
   );
@@ -50,7 +60,7 @@ function AddProduct({ navigation }) {
   const addImage = async () => {
     console.log("Add Image");
     // let result = await ImagePicker.launchImageLibraryAsync();
-    let result = await ImagePicker.launchCameraAsync();
+    let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
     if (!result.cancelled) {
       setUri(result.uri);
     }
@@ -173,9 +183,13 @@ function AddProduct({ navigation }) {
           )}
         </Formik>
       </View>
-      <View style={styles.loginTextBottomContainer}>
-        <View style={styles.loginTextBottomContainerBigCircle} />
-        <View style={styles.loginTextBottomContainerSmallCircle} />
+      <View style={{ alignSelf: "center" }}>
+        <AdMobBanner
+          bannerSize="leaderboard"
+          adUnitID={bannerID}
+          servePersonalizedAds={true}
+          // onDidFailToRfeceiveAdWithError={console.log}
+        />
       </View>
       <StatusBar hidden style={"inverted"} />
     </Pressable>

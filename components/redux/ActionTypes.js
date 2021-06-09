@@ -1,0 +1,10 @@
+export const INCREMENT = "INCREMENT";
+export const DECREMENT = "DECREMENT";
+export const LOAD = "LOAD";
+export const SUCCESSFULL = "SUCCESSFULL";
+export const LOGINFAILURE = "LOGINFAILURE";
+export const OFFLINE = "OFFLINE";
+export const SIGNOUT = "SIGNOUT";
+export const SCROLL = "SCROLL";
+export const COUNTERINC = "COUNTERINC";
+export const COUNTERDEC = "COUNTERDEC";
