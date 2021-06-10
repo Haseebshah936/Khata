@@ -9,6 +9,8 @@ import {
   SCROLL,
   COUNTERINC,
   COUNTERDEC,
+  PHOTOURIREMOVE,
+  PHOTOURI,
 } from "./ActionTypes";
 
 const initialState = {
@@ -149,6 +151,16 @@ export default Reducer = (state = initialState, action) => {
       return {
         ...state,
         count: state.count - 1,
+      };
+    case PHOTOURI:
+      return {
+        ...state,
+        profilePic: action.payload,
+      };
+    case PHOTOURIREMOVE:
+      return {
+        ...state,
+        profilePic: "",
       };
     default:
       return state;

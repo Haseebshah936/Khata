@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -20,9 +20,10 @@ import { Formik } from "formik";
 import ErrorMessage from "./ErrorMessage";
 import { auth } from "../../firebase";
 import Constants from "expo-constants";
-import * as ImagePicker from "expo-image-picker";
 import styles from "../Style/stylesRegister";
 import { useIsFocused } from "@react-navigation/core";
+import { useDispatch, useSelector } from "react-redux";
+import { register, addImage } from "../redux/Actions";
 
 const validationSchema = Yup.object().shape({
   userName: Yup.string().required().label("User Name"),
@@ -35,50 +36,52 @@ const hold =
   "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
 
 function RegisterForm({ navigation }) {
-  const [uri, setUri] = useState(hold);
-  const register = (values) => {
-    auth
-      .createUserWithEmailAndPassword(values.email, values.password)
-      .then((userCredential) => {
-        // Signed in
-        var user = userCredential.user;
-        let url = "";
-        if (uri !== hold) {
-          console.log(uri);
-          url = uri;
-        }
-        user
-          .updateProfile({
-            displayName: values.userName,
-            photoURL: url,
-            phoneNumber: values.phoneNo,
-          })
-          .then(function () {
-            // Update successful.
-          })
-          .catch(function (error) {
-            // An error happened.
-          });
-        navigation.popToTop();
-      })
-      .catch((error) => {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(errorMessage);
-        // ..
-      });
-  };
+  const store = useSelector((state) => state);
+  const dispatch = useDispatch();
+  let uri = store.Reducer.profilePic;
+  // const register = (values) => {
+  //   auth
+  //     .createUserWithEmailAndPassword(values.email, values.password)
+  //     .then((userCredential) => {
+  //       // Signed in
+  //       var user = userCredential.user;
+  //       let url = "";
+  //       if (uri !== hold) {
+  //         console.log(uri);
+  //         url = uri;
+  //       }
+  //       user
+  //         .updateProfile({
+  //           displayName: values.userName,
+  //           photoURL: url,
+  //           phoneNumber: values.phoneNo,
+  //         })
+  //         .then(function () {
+  //           // Update successful.
+  //         })
+  //         .catch(function (error) {
+  //           // An error happened.
+  //         });
+  //       navigation.popToTop();
+  //     })
+  //     .catch((error) => {
+  //       var errorCode = error.code;
+  //       var errorMessage = error.message;
+  //       alert(errorMessage);
+  //       // ..
+  //     });
+  // };
 
-  const addImage = async () => {
-    console.log("Add Image");
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.2,
-    });
-    if (!result.cancelled) {
-      setUri(result.uri);
-    }
-  };
+  // const addImage = async () => {
+  //   console.log("Add Image");
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     quality: 0.2,
+  //   });
+  //   if (!result.cancelled) {
+  //     setUri(result.uri);
+  //   }
+  // };
   return (
     <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
       <View style={styles.loginTextTopContainer}>
@@ -97,7 +100,16 @@ function RegisterForm({ navigation }) {
             phoneNo: "",
             address: "",
           }}
-          onSubmit={(values) => register(values)}
+          onSubmit={(values) =>
+            dispatch(
+              register(
+                values.email,
+                values.password,
+                values.phoneNo,
+                values.userName
+              )
+            )
+          }
           validationSchema={validationSchema}
         >
           {({
@@ -113,16 +125,27 @@ function RegisterForm({ navigation }) {
                   <TouchableOpacity
                     style={styles.profilePic}
                     activeOpacity={0.6}
-                    onPress={() => addImage()}
+                    onPress={() => dispatch(addImage())}
                   >
-                    <Image
-                      resizeMethod={"resize"}
-                      source={{
-                        width: 120,
-                        height: 120,
-                        uri: uri,
-                      }}
-                    />
+                    {uri !== "" ? (
+                      <Image
+                        resizeMethod={"resize"}
+                        source={{
+                          width: 120,
+                          height: 120,
+                          uri: uri,
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        resizeMethod={"resize"}
+                        source={{
+                          width: 120,
+                          height: 120,
+                          uri: hold,
+                        }}
+                      />
+                    )}
                   </TouchableOpacity>
                   <View style={{ flex: 0.9 }}>
                     <View style={styles.productContainer}>

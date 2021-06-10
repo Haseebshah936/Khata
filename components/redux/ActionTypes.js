@@ -8,3 +8,4 @@ export const SIGNOUT = "SIGNOUT";
 export const SCROLL = "SCROLL";
 export const COUNTERINC = "COUNTERINC";
 export const COUNTERDEC = "COUNTERDEC";
+export const PHOTOURI = "PHOTOURI";
