@@ -29,7 +29,7 @@ const validationSchema = Yup.object().shape({
   userName: Yup.string().required().label("User Name"),
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().required().min(8).label("Password"),
-  phoneNo: Yup.number().required().label("Phone Number"),
+  phoneNo: Yup.number().label("Phone Number"),
 });
 
 const hold =
@@ -106,7 +106,8 @@ function RegisterForm({ navigation }) {
                 values.email,
                 values.password,
                 values.phoneNo,
-                values.userName
+                values.userName,
+                uri
               )
             )
           }
@@ -127,7 +128,7 @@ function RegisterForm({ navigation }) {
                     activeOpacity={0.6}
                     onPress={() => dispatch(addImage())}
                   >
-                    {uri !== "" ? (
+                    {uri ? (
                       <Image
                         resizeMethod={"resize"}
                         source={{

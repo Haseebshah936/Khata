@@ -16,7 +16,7 @@ import {
 const initialState = {
   signin: false,
   loading: true,
-  profilePic: "",
+  profilePic: null,
   userID: "",
   displayName: "",
   count: 0,
@@ -101,7 +101,7 @@ const initialState = {
 };
 
 export default Reducer = (state = initialState, action) => {
-  console.log(state);
+  // console.log(state);
   switch (action.type) {
     case SUCCESSFULL:
       return {

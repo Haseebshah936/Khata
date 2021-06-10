@@ -46,6 +46,8 @@ function Account({ navigation }) {
   //   //   console.log(value + "After Signout")
   //   // );
   // };
+  console.log(auth.currentUser);
+
   console.log("State", store);
   const check = () => {
     console.log(user);

@@ -1,4 +1,9 @@
-import { auth, fbAuthProvider, googleAuthProvider } from "../../firebase";
+import {
+  auth,
+  fbAuthProvider,
+  googleAuthProvider,
+  storage,
+} from "../../firebase";
 import {
   DECREMENT,
   INCREMENT,
@@ -101,7 +106,7 @@ export const logOut = () => {
   return {
     type: SIGNOUT,
     payload: {
-      profilePic: "",
+      profilePic: null,
       userID: "",
       displayName: "",
       interstitialCount: 0,
@@ -156,14 +161,9 @@ export const loginWithEmail = (email, password) => {
           data: [],
           offlineNote: [],
         };
-        const result = JSON.parse(
-          await SecureStore.getItemAsync("AppSKHATA786")
-        );
-        if (result || result != null) {
-          state = result;
-        } else {
-          await SecureStore.setItemAsync("AppSKHATA786", JSON.stringify(state));
-        }
+
+        await SecureStore.setItemAsync("AppSKHATA786", JSON.stringify(state));
+
         dispatch(
           loginSuccessFull(
             state.userID,
@@ -210,18 +210,12 @@ export const loginWithFacebook = () => {
               data: [],
               offlineNote: [],
             };
-            const result = JSON.parse(
-              await SecureStore.getItemAsync("AppSKHATA786")
+
+            await SecureStore.setItemAsync(
+              "AppSKHATA786",
+              JSON.stringify(state)
             );
-            if (result || result != null) {
-              state = result;
-              console.log(state);
-            } else {
-              await SecureStore.setItemAsync(
-                "AppSKHATA786",
-                JSON.stringify(state)
-              );
-            }
+
             dispatch(
               loginSuccessFull(
                 state.userID,
@@ -273,18 +267,10 @@ export const loginWithGoogle = () => {
               data: [],
               offlineNote: [],
             };
-
-            const result = JSON.parse(
-              await SecureStore.getItemAsync("AppSKHATA786")
+            await SecureStore.setItemAsync(
+              "AppSKHATA786",
+              JSON.stringify(state)
             );
-            if (result || result != null) {
-              state = result;
-            } else {
-              await SecureStore.setItemAsync(
-                "AppSKHATA786",
-                JSON.stringify(state)
-              );
-            }
             dispatch(
               loginSuccessFull(
                 state.userID,
@@ -323,58 +309,64 @@ export const signOut = () => {
   };
 };
 
-export const register = (email, password, phoneNo, userName) => {
-  const store = useSelector((state) => state);
-  const profilePic = store.Reducer.profilePic;
+export const uploadImage = async (uri, id) => {
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  let ref = storage.ref().child("Images/" + id);
+  await ref.put(blob);
+  return ref.getDownloadURL();
+};
+
+export const register = (email, password, phoneNo, userName, profilePic) => {
   return async (dispatch) => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then(async (userCredential) => {
         // Signed in
         var user = userCredential.user;
-        if (profilePic !== "") {
+        if (profilePic) {
           console.log(profilePic);
-          const response = await fetch(profilePic);
-          const blob = await response.blob();
-          let ref = storage.ref().child("ProfilePics/" + user.uid);
-          await ref.put(blob);
-          setProfilePic(ref.getDownloadURL());
-        }
-        user
-          .updateProfile({
-            displayName: userName,
-            photoURL: profilePic,
-            phoneNumber: phoneNo,
-          })
-          .then(async () => {
-            let state = {
-              photoUrl: user.photoURL,
-              userID: user.uid,
-              displayName: user.displayName,
-              count: 0,
-              data: [],
-              offlineNote: [],
-            };
+          uploadImage(profilePic, user.uid).then((uri) => {
+            console.log(uri);
+            dispatch(setProfilePic(uri));
 
-            await SecureStore.setItemAsync(
-              "AppSKHATA786",
-              JSON.stringify(state)
-            );
-            dispatch(
-              loginSuccessFull(
-                state.userID,
-                state.photoUrl,
-                state.displayName,
-                state.count,
-                state.offlineNote,
-                state.data
-              )
-            );
-          })
-          .catch(function (error) {
-            // An error happened.
-            alert(error);
+            user
+              .updateProfile({
+                displayName: userName,
+                photoURL: uri,
+                phoneNumber: phoneNo,
+              })
+              .then(async () => {
+                let state = {
+                  photoUrl: user.photoURL,
+                  userID: user.uid,
+                  displayName: user.displayName,
+                  count: 0,
+                  data: [],
+                  offlineNote: [],
+                };
+
+                await SecureStore.setItemAsync(
+                  "AppSKHATA786",
+                  JSON.stringify(state)
+                );
+                dispatch(
+                  loginSuccessFull(
+                    state.userID,
+                    state.photoUrl,
+                    state.displayName,
+                    state.count,
+                    state.offlineNote,
+                    state.data
+                  )
+                );
+              })
+              .catch(function (error) {
+                // An error happened.
+                alert(error);
+              });
           });
+        }
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -385,15 +377,20 @@ export const register = (email, password, phoneNo, userName) => {
   };
 };
 
-export const addImage = async () => {
-  console.log("Add Image");
-  let result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    quality: 0.2,
-  });
-  if (!result.cancelled) {
-    setProfilePic(result.uri);
-  }
+export const addImage = () => {
+  return async (dispatch) => {
+    console.log("Add Image");
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.2,
+    });
+    // let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
+
+    if (!result.cancelled) {
+      console.log(result.uri);
+      dispatch(setProfilePic(result.uri));
+    }
+  };
 };
 
 export const setProfilePic = (uri) => {
@@ -405,6 +402,6 @@ export const setProfilePic = (uri) => {
 
 export const removeProfilePic = () => {
   return {
-    type: PHOTOURIREMOVEE,
+    type: PHOTOURIREMOVE,
   };
 };
