@@ -10,6 +10,7 @@ import {
   Button,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import Constants from "expo-constants";
 import Client from "./Client";
@@ -79,7 +80,7 @@ function UserData({ navigation }) {
     await AdMobInterstitial.requestAdAsync({
       servePersonalizedAds: true,
     }).catch(console.log);
-    if (await AdMobInterstitial.getIsReadyAsync().valueOf)
+    if (await AdMobInterstitial.getIsReadyAsync().valueOf())
       await AdMobInterstitial.showAdAsync();
   };
 
@@ -98,6 +99,7 @@ function UserData({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       {/* <Button title={"Open"} onPress={()=> navigation.openDrawer()} /> */}
+      {isLoading && <ActivityIndicator size={"large"} color={"black"} />}
       <FlatList
         data={data}
         keyExtractor={(item, index) => index.toString()}

@@ -54,20 +54,20 @@ function LoginForm({ navigation }) {
   //       alert(errorMessage + "Line 42");
   //     });
   // };
-  const anonymousSignin = () => {
-    auth
-      .signInAnonymously()
-      .then(() => {
-        // Signed in..
-        navigation.replace("Main");
-      })
-      .catch((error) => {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(errorMessage + "Line 56");
-        // ...
-      });
-  };
+  // const anonymousSignin = () => {
+  //   auth
+  //     .signInAnonymously()
+  //     .then(() => {
+  //       // Signed in..
+  //       navigation.replace("Main");
+  //     })
+  //     .catch((error) => {
+  //       var errorCode = error.code;
+  //       var errorMessage = error.message;
+  //       alert(errorMessage + "Line 56");
+  //       // ...
+  //     });
+  // };
 
   // const loginWithFacebook = async () => {
   //   try {
@@ -116,16 +116,16 @@ function LoginForm({ navigation }) {
   //   }
   // };
 
-  useEffect(() => {
-    const unsub = auth.onAuthStateChanged((user) => {
-      if (user != null) {
-        console.log("We are authenticated now!");
-        console.log(user);
-        navigation.replace("Main");
-      }
-    });
-    return unsub;
-  });
+  // useEffect(() => {
+  //   const unsub = auth.onAuthStateChanged((user) => {
+  //     if (user != null) {
+  //       console.log("We are authenticated now!");
+  //       console.log(user);
+  //       navigation.replace("Main");
+  //     }
+  //   });
+  //   return unsub;
+  // });
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>

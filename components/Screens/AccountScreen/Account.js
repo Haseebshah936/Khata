@@ -65,7 +65,7 @@ function Account({ navigation }) {
         <Profile
           image={store.Reducer.profilePic}
           userName={store.Reducer.displayName}
-          fontSize={20}
+          fontSize={12}
           fontColor={"white"}
           marginTop={0}
         />

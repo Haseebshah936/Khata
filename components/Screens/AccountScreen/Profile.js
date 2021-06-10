@@ -78,9 +78,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   profilePic: {
-    width: 60,
-    height: 60,
-    borderRadius: 35,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     right: 5,
   },
   textContainer: {
