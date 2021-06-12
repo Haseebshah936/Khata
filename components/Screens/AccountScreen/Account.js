@@ -84,8 +84,8 @@ function Account({ navigation }) {
                 backgroundColor="#91d5e6"
               />
             }
-            userName={"My Account"}
-            onPress={() => check()}
+            userName={"Offline Note"}
+            onPress={() => navigation.navigate("OfflineNote")}
           />
         </View>
         <View>
