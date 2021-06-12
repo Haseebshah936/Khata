@@ -129,7 +129,6 @@ function LoginForm({ navigation }) {
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
-      {/* <Image style={styles.logo} source={require("../../assets/Logo.png")} /> */}
       <View style={styles.loginTextTopContainer}>
         <Text style={styles.loginText}>Login</Text>
         <View style={styles.circleContainer}>
