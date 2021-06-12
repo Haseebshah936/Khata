@@ -1,12 +1,10 @@
 import * as React from "react";
-import { Button, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AppNavigator from "./AppNavigator";
-import index from "../TodoFireStore";
-import Account from "../Screens/AccountScreen/Account";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AddKhataButton from "./AddKhataButton";
 import AddKhata from "../Dashbord/AddKhata";
+import AccountNavigator from "./AccountNavigator";
 
 // import index from "../TodoRealTime";
 
@@ -40,7 +38,7 @@ function DrawerNavigator(props) {
           ),
         }}
         name="Account"
-        component={Account}
+        component={AccountNavigator}
       />
     </Tab.Navigator>
   );
