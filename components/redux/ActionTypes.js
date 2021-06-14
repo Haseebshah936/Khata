@@ -9,3 +9,6 @@ export const SCROLL = "SCROLL";
 export const COUNTERINC = "COUNTERINC";
 export const COUNTERDEC = "COUNTERDEC";
 export const PHOTOURI = "PHOTOURI";
+export const PHOTOURIREMOVE = "PHOTOURIREMOVE";
+export const SETDATA = "SETDATA";
+export const SETOFFLINENOTE = "SETOFFLINENOTE";

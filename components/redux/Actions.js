@@ -329,12 +329,13 @@ export const register = (email, password, phoneNo, userName, profilePic) => {
           uploadImage(profilePic, user.uid).then((uri) => {
             console.log(uri);
             dispatch(setProfilePic(uri));
+            // if(phoneNo){
 
+            // }
             user
               .updateProfile({
                 displayName: userName,
                 photoURL: uri,
-                phoneNumber: phoneNo,
               })
               .then(async () => {
                 let state = {
