@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet } from "react-native";
 import Constants from "expo-constants";
+import color from "./color";
 
 const stylesRegister = StyleSheet.create({
   container: {
@@ -24,7 +25,7 @@ const stylesRegister = StyleSheet.create({
   },
   loginInputContainer: {
     flexDirection: "row",
-    borderColor: "#ff8800",
+    borderColor: color.primary,
     borderBottomWidth: 1,
   },
   loginInput: {
@@ -49,7 +50,7 @@ const stylesRegister = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 20,
-    backgroundColor: "#ff8800",
+    backgroundColor: color.primary,
     elevation: 17,
     shadowColor: "grey",
     shadowOffset: {
@@ -64,7 +65,7 @@ const stylesRegister = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 40,
-    backgroundColor: "#ff8800",
+    backgroundColor: color.primary,
     elevation: 25,
     shadowColor: "grey",
     shadowOffset: {
@@ -79,7 +80,7 @@ const stylesRegister = StyleSheet.create({
     paddingRight: 5,
   },
   submitButton: {
-    backgroundColor: "#ff8800",
+    backgroundColor: color.primary,
     left: "60%",
     paddingLeft: "10%",
     marginTop: 25,
@@ -117,7 +118,7 @@ const stylesRegister = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 40,
-    backgroundColor: "#ff8800",
+    backgroundColor: color.primary,
     elevation: 20,
     shadowColor: "grey",
     shadowOffset: {
@@ -132,7 +133,7 @@ const stylesRegister = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#ff8800",
+    backgroundColor: color.primary,
     elevation: 15,
     shadowColor: "grey",
     shadowOffset: {
@@ -193,7 +194,7 @@ const stylesRegister = StyleSheet.create({
   },
   productContainer: {
     flexDirection: "row",
-    borderColor: "#ff8800",
+    borderColor: color.primary,
     borderBottomWidth: 1,
   },
   profilePic: {

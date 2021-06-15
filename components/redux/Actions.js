@@ -1,4 +1,5 @@
 import {
+  actionCodeSettings,
   auth,
   fbAuthProvider,
   googleAuthProvider,
@@ -17,6 +18,9 @@ import {
   COUNTERDEC,
   PHOTOURI,
   PHOTOURIREMOVE,
+  SETDATA,
+  SETOFFLINENOTE,
+  CHECKVERIFICATION,
 } from "./ActionTypes";
 import * as SecureStore from "expo-secure-store";
 import * as Facebook from "expo-facebook";
@@ -102,6 +106,19 @@ export const connection = (offline) => {
   };
 };
 
+export const setData = (data) => {
+  return {
+    type: SETDATA,
+    payload: data,
+  };
+};
+export const setOfflineNote = (offlineNote) => {
+  return {
+    type: SETOFFLINENOTE,
+    payload: offlineNote,
+  };
+};
+
 export const logOut = () => {
   return {
     type: SIGNOUT,
@@ -146,41 +163,6 @@ export const loginOffline = () => {
   };
 };
 
-export const loginWithEmail = (email, password) => {
-  return async (dispatch) => {
-    // dispatch(loginRequest());
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
-        let state = {
-          photoUrl: user.photoURL,
-          userID: user.uid,
-          displayName: user.displayName,
-          count: 0,
-          data: [],
-          offlineNote: [],
-        };
-
-        await SecureStore.setItemAsync("AppSKHATA786", JSON.stringify(state));
-
-        dispatch(
-          loginSuccessFull(
-            state.userID,
-            state.photoUrl,
-            state.displayName,
-            state.count,
-            state.offlineNote,
-            state.data
-          )
-        );
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
-};
-
 export const loginWithFacebook = () => {
   console.log("FB");
   return async (dispatch) => {
@@ -194,10 +176,7 @@ export const loginWithFacebook = () => {
         });
 
       if (type === "success") {
-        // Build Firebase credential with the Facebook access token.
         const credential = fbAuthProvider.credential(token);
-
-        // Sign in with credential from the Facebook user.
         auth
           .signInWithCredential(credential)
           .then(async (userCredential) => {
@@ -246,7 +225,7 @@ export const loginWithGoogle = () => {
       const result = await Google.logInAsync({
         androidClientId: androidClientIdGoogle,
         iosClientId: iosClientIdGoogle,
-        behavior: "web",
+        behavior: "system",
         scopes: ["profile", "email"],
       });
 
@@ -310,64 +289,125 @@ export const signOut = () => {
 };
 
 export const uploadImage = async (uri, id) => {
-  const response = await fetch(uri);
-  const blob = await response.blob();
-  let ref = storage.ref().child("Images/" + id);
-  await ref.put(blob);
-  return ref.getDownloadURL();
+  if (uri) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    let ref = storage.ref().child("Images/" + id);
+    await ref.put(blob);
+    return ref.getDownloadURL();
+  }
+  return null;
 };
 
-export const register = (email, password, phoneNo, userName, profilePic) => {
+export const loginWithEmail = (email, password) => {
+  return async (dispatch) => {
+    // dispatch(loginRequest());
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        if (user.emailVerified) {
+          let state = {
+            photoUrl: user.photoURL,
+            userID: user.uid,
+            displayName: user.displayName,
+            count: 0,
+            data: [],
+            offlineNote: [],
+          };
+          await SecureStore.setItemAsync("AppSKHATA786", JSON.stringify(state));
+          dispatch(
+            loginSuccessFull(
+              state.userID,
+              state.photoUrl,
+              state.displayName,
+              state.count,
+              state.offlineNote,
+              state.data
+            )
+          );
+        } else {
+          alert(
+            "Account exist but Email is Not verified. Verify your email first or forget password to fix it."
+          );
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+};
+
+export const verfication = () => {
+  return {
+    type: CHECKVERIFICATION,
+  };
+};
+
+export const register = (
+  email,
+  password,
+  userName,
+  profilePic,
+  credential = null
+) => {
   return async (dispatch) => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then(async (userCredential) => {
         // Signed in
         var user = userCredential.user;
-        if (profilePic) {
-          console.log(profilePic);
-          uploadImage(profilePic, user.uid).then((uri) => {
-            console.log(uri);
-            dispatch(setProfilePic(uri));
-            // if(phoneNo){
-
-            // }
-            user
-              .updateProfile({
-                displayName: userName,
-                photoURL: uri,
-              })
-              .then(async () => {
-                let state = {
-                  photoUrl: user.photoURL,
-                  userID: user.uid,
-                  displayName: user.displayName,
-                  count: 0,
-                  data: [],
-                  offlineNote: [],
-                };
-
-                await SecureStore.setItemAsync(
-                  "AppSKHATA786",
-                  JSON.stringify(state)
-                );
-                dispatch(
-                  loginSuccessFull(
-                    state.userID,
-                    state.photoUrl,
-                    state.displayName,
-                    state.count,
-                    state.offlineNote,
-                    state.data
-                  )
-                );
-              })
-              .catch(function (error) {
-                // An error happened.
-                alert(error);
+        // console.log(profilePic);
+        uploadImage(profilePic, user.uid).then((uri) => {
+          // console.log(uri);
+          dispatch(setProfilePic(uri));
+          // console.log(credential);
+          user
+            .updateProfile({
+              displayName: userName,
+              photoURL: uri,
+            })
+            .then(() => {
+              if (credential) user.updatePhoneNumber(credential);
+              user.sendEmailVerification().then(() => {
+                dispatch(verfication());
+                alert("An Email Verification link is sent to your email");
+                dispatch(loginFailure());
               });
-          });
-        }
+            })
+            .catch((err) => {
+              alert(err);
+            });
+          // .then(async () => {
+          //   let state = {
+          //     photoUrl: user.photoURL,
+          //     userID: user.uid,
+          //     displayName: user.displayName,
+          //     count: 0,
+          //     data: [],
+          //     offlineNote: [],
+          //   };
+
+          //   await SecureStore.setItemAsync(
+          //     "AppSKHATA786",
+          //     JSON.stringify(state)
+          //   );
+          //   dispatch(
+          //     loginSuccessFull(
+          //       state.userID,
+          //       state.photoUrl,
+          //       state.displayName,
+          //       state.count,
+          //       state.offlineNote,
+          //       state.data
+          //     )
+          //   );
+          // })
+          // .catch(function (error) {
+          //   // An error happened.
+          //   alert(error);
+          // });
+        });
       })
       .catch((error) => {
         var errorCode = error.code;

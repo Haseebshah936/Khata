@@ -47,6 +47,7 @@ function Account({ navigation }) {
   //   // );
   // };
   console.log(auth.currentUser);
+  // console.log("Phone NO" + auth.currentUser.phoneNumber);
 
   console.log("State", store);
   const check = () => {

@@ -11,6 +11,7 @@ import {
   COUNTERDEC,
   PHOTOURIREMOVE,
   PHOTOURI,
+  CHECKVERIFICATION,
 } from "./ActionTypes";
 
 const initialState = {
@@ -161,6 +162,11 @@ export default Reducer = (state = initialState, action) => {
       return {
         ...state,
         profilePic: "",
+      };
+    case CHECKVERIFICATION:
+      return {
+        ...state,
+        loading: true,
       };
     default:
       return state;
