@@ -12,6 +12,9 @@ import {
   PHOTOURIREMOVE,
   PHOTOURI,
   CHECKVERIFICATION,
+  KHATAURIREMOVE,
+  KHATAURI,
+  ADDDATA,
 } from "./ActionTypes";
 
 const initialState = {
@@ -23,6 +26,9 @@ const initialState = {
   count: 0,
   enableScroll: true,
   offline: false,
+  email: null,
+  password: null,
+  khataImage: null,
   offlineNote: [
     {
       first_name: "Haseeb",
@@ -102,7 +108,6 @@ const initialState = {
 };
 
 export default Reducer = (state = initialState, action) => {
-  // console.log(state);
   switch (action.type) {
     case SUCCESSFULL:
       return {
@@ -111,6 +116,8 @@ export default Reducer = (state = initialState, action) => {
         loading: false,
         profilePic: action.payload.photoUrl,
         userID: action.payload.userID,
+        email: action.payload.email,
+        password: action.payload.password,
         displayName: action.payload.displayName,
         count: action.payload.count,
         offlineNote: action.payload.offlineNote,
@@ -161,12 +168,27 @@ export default Reducer = (state = initialState, action) => {
     case PHOTOURIREMOVE:
       return {
         ...state,
-        profilePic: "",
+        profilePic: null,
+      };
+    case KHATAURI:
+      return {
+        ...state,
+        khataImage: action.payload,
+      };
+    case KHATAURIREMOVE:
+      return {
+        ...state,
+        khataImage: null,
       };
     case CHECKVERIFICATION:
       return {
         ...state,
         loading: true,
+      };
+    case ADDDATA:
+      return {
+        ...state,
+        data: [...state.data, action.payload],
       };
     default:
       return state;

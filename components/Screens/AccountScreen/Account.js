@@ -46,13 +46,13 @@ function Account({ navigation }) {
   //   //   console.log(value + "After Signout")
   //   // );
   // };
-  console.log(auth.currentUser);
+  // console.log(auth.currentUser);
   // console.log("Phone NO" + auth.currentUser.phoneNumber);
 
-  console.log("State", store);
-  const check = () => {
-    console.log(user);
-  };
+  // console.log("State", store.Reducer);
+  // const check = () => {
+  //   console.log(user);
+  // };
   return (
     <SafeAreaView style={styles1.container}>
       <View

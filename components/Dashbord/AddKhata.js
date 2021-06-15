@@ -28,6 +28,12 @@ import {
   AdMobRewarded,
   setTestDeviceIDAsync,
 } from "expo-ads-admob";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addKhataAccount,
+  addKhataImage,
+  addKhataProfile,
+} from "../redux/Actions";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("User Name"),
@@ -44,29 +50,24 @@ function AddKhata({ navigation }) {
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const interstitialID =
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
-  const [uri, setUri] = useState(
-    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641"
-  );
-  const login = (values) => {
-    console.log(values);
-    let id = auth.currentUser.uid;
-    // alert(id);
-    db.collection(id).doc("0").set({
-      userName: values.name,
-      phoneNo: values.phoneNo,
-      address: values.address,
-    });
-    // alert("Login Successfull");
-    console.log(auth.currentUser);
-  };
-  const addImage = async () => {
-    console.log("Add Image");
-    // let result = await ImagePicker.launchImageLibraryAsync();
-    let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
-    if (!result.cancelled) {
-      setUri(result.uri);
-    }
-  };
+  // const [uri, setUri] = useState(null);
+  const store = useSelector((state) => state);
+  const uri = store.Reducer.khataImage;
+  const data = store.Reducer.data;
+  const hold =
+    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
+  const dispatch = useDispatch();
+
+  // alert(data);
+
+  // const addImage = async () => {
+  //   console.log("Add Image");
+  //   // let result = await ImagePicker.launchImageLibraryAsync();
+  //   let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
+  //   if (!result.cancelled) {
+  //     setUri(result.uri);
+  //   }
+  // };
 
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
@@ -90,8 +91,16 @@ function AddKhata({ navigation }) {
         <Formik
           initialValues={{ name: "", phoneNo: "", address: "" }}
           onSubmit={(values) => {
-            login(values);
-            instential();
+            dispatch(
+              addKhataProfile(
+                values.name,
+                values.phoneNo,
+                values.address,
+                uri,
+                data
+              )
+            );
+            // instential();
           }}
           validationSchema={validationSchema}
         >
@@ -108,16 +117,27 @@ function AddKhata({ navigation }) {
                   <TouchableOpacity
                     style={styles.profilePic}
                     activeOpacity={0.6}
-                    onPress={() => addImage()}
+                    onPress={() => dispatch(addKhataImage(uri))}
                   >
-                    <Image
-                      resizeMethod={"resize"}
-                      source={{
-                        width: 120,
-                        height: 120,
-                        uri: uri,
-                      }}
-                    />
+                    {uri ? (
+                      <Image
+                        resizeMethod={"resize"}
+                        source={{
+                          width: 120,
+                          height: 120,
+                          uri: uri,
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        resizeMethod={"resize"}
+                        source={{
+                          width: 120,
+                          height: 120,
+                          uri: hold,
+                        }}
+                      />
+                    )}
                   </TouchableOpacity>
                   <View style={{ flex: 1 }}>
                     <View style={styles.productContainer}>
