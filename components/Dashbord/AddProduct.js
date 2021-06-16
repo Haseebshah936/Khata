@@ -78,7 +78,16 @@ function AddProduct({ navigation }) {
       <View>
         <Formik
           initialValues={{ name: "", price: "", description: "" }}
-          onSubmit={(values) => login(values)}
+          onSubmit={(values) => {
+            dispatch(
+              addKhataProfile(
+                values.name,
+                values.price,
+                values.description,
+                uri
+              )
+            );
+          }}
           validationSchema={validationSchema}
         >
           {({

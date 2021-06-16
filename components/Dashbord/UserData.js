@@ -25,7 +25,8 @@ import {
   AdMobRewarded,
   setTestDeviceIDAsync,
 } from "expo-ads-admob";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setKey } from "../redux/Actions";
 
 const DATA = [
   {
@@ -74,6 +75,7 @@ function UserData({ navigation }) {
   const interstitialID =
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
   const state = useSelector((state) => state);
+  const dispatch = useDispatch();
 
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
@@ -109,7 +111,10 @@ function UserData({ navigation }) {
             name={item.first_name}
             phoneNo={item.last_name}
             amountToPay={item.email}
-            onPress={() => navigation.navigate("ThingsBought")}
+            onPress={() => {
+              dispatch(setKey(item.key));
+              navigation.navigate("ThingsBought");
+            }}
             renderRightActions={() => (
               <RenderRightAction onPress={() => alert("Are you sure")} />
             )}

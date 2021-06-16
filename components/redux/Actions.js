@@ -25,6 +25,8 @@ import {
   KHATAURI,
   KHATAURIREMOVE,
   ADDDATA,
+  ADDPRODUCT,
+  KEY,
 } from "./ActionTypes";
 import * as SecureStore from "expo-secure-store";
 import * as Facebook from "expo-facebook";
@@ -181,6 +183,23 @@ export const setKhataImage = (uri) => {
 export const removeKhataImage = () => {
   return {
     type: KHATAURIREMOVE,
+  };
+};
+
+export const addKhataAccount = (data) => {
+  return {
+    type: ADDDATA,
+    payload: data,
+  };
+};
+
+export const addKhataProductData = (key, data) => {
+  return {
+    type: ADDPRODUCT,
+    payload: {
+      key,
+      data,
+    },
   };
 };
 
@@ -429,12 +448,28 @@ export const register = (
               photoURL: uri,
             })
             .then(() => {
-              if (credential) user.updatePhoneNumber(credential);
-              user.sendEmailVerification().then(() => {
-                dispatch(verfication());
-                alert("An Email Verification link is sent to your email");
-                dispatch(loginFailure());
-              });
+              if (credential) {
+                user
+                  .updatePhoneNumber(credential)
+                  .catch((err) => {
+                    return "Phone Number is Already in use. You can Add it Later";
+                  })
+                  .then((st) => {
+                    user.sendEmailVerification().then(() => {
+                      dispatch(verfication());
+                      alert(
+                        "An Email Verification link is sent to your email" + st
+                      );
+                      dispatch(loginFailure());
+                    });
+                  });
+              } else {
+                user.sendEmailVerification().then(() => {
+                  dispatch(verfication());
+                  alert("An Email Verification link is sent to your email");
+                  dispatch(loginFailure());
+                });
+              }
             })
             .catch((err) => {
               alert(err);
@@ -504,11 +539,12 @@ export const uploadKhataImage = async (uri, id) => {
   return null;
 };
 
-export const addKhataProfile = (name, phoneNo, address, uri, data = []) => {
+export const addKhataProfile = (name, phoneNo, address, uri) => {
   return async (dispatch) => {
     let id;
+    const data = Store.getState().Reducer.data;
     // console.log(values);
-    alert("IN Side Action addKhataProfile" + data);
+    // alert("IN Side Action addKhataProfile" + data);
     const length = data.length;
     let userId = auth.currentUser.uid;
     if (data.length == 0) {
@@ -545,10 +581,51 @@ export const addKhataProfile = (name, phoneNo, address, uri, data = []) => {
   };
 };
 
-export const addKhataAccount = (data) => {
+export const addKhataProduct = (name, price, description = "", uri) => {
+  return async (dispatch) => {
+    let id;
+    const data = Store.getState().Reducer.data.filter((m) => m.key == key).data;
+    // console.log(values);
+    alert("IN Side Action addKhataProduct" + data);
+    const length = data.length;
+    let userId = auth.currentUser.uid;
+    if (data.length == 0) {
+      id = 0;
+    } else {
+      id = data[data.length - 1].key + 1;
+    }
+    // id = 0;
+    const khataProfileProduct = {
+      key: id,
+      userName: name,
+      price,
+      description,
+      uri,
+    };
+    // console.log("IN Side Action addKhataProfile" + khataProfileProduct.key);
+    dispatch(addKhataAccount(khataProfileProduct));
+    uploadKhataImage(uri, id)
+      .then((uri) => {
+        dispatch(setKhataImage(uri));
+        db.collection(userId)
+          .add({ ...khataProfileProduct, uri })
+          .then(() => {
+            alert("User added!");
+          });
+      })
+      .then(() => dispatch(removeKhataImage()));
+    await SecureStore.setItemAsync(
+      "AppSKHATA786",
+      JSON.stringify(Store.getState().Reducer)
+    );
+    console.log("Let Check State" + Store.getState().Reducer);
+  };
+};
+
+export const setKey = (key) => {
   return {
-    type: ADDDATA,
-    payload: data,
+    type: KEY,
+    payload: key,
   };
 };
 

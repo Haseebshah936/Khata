@@ -58,17 +58,6 @@ function AddKhata({ navigation }) {
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
   const dispatch = useDispatch();
 
-  // alert(data);
-
-  // const addImage = async () => {
-  //   console.log("Add Image");
-  //   // let result = await ImagePicker.launchImageLibraryAsync();
-  //   let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
-  //   if (!result.cancelled) {
-  //     setUri(result.uri);
-  //   }
-  // };
-
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
     await AdMobInterstitial.requestAdAsync({
@@ -100,7 +89,6 @@ function AddKhata({ navigation }) {
                 data
               )
             );
-            // instential();
           }}
           validationSchema={validationSchema}
         >

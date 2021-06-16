@@ -14,5 +14,7 @@ export const KHATAURI = "KHATAURI";
 export const KHATAURIREMOVE = "KHATAURIREMOVE";
 export const SETDATA = "SETDATA";
 export const ADDDATA = "ADDDATA";
+export const ADDPRODUCT = "ADDPRODUCT";
 export const SETOFFLINENOTE = "SETOFFLINENOTE";
 export const CHECKVERIFICATION = "CHECKVERIFICATION";
+export const KEY = "KEY";

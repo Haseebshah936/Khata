@@ -15,6 +15,7 @@ import {
   KHATAURIREMOVE,
   KHATAURI,
   ADDDATA,
+  KEY,
 } from "./ActionTypes";
 
 const initialState = {
@@ -24,6 +25,7 @@ const initialState = {
   userID: "",
   displayName: "",
   count: 0,
+  key: 0,
   enableScroll: true,
   offline: false,
   email: null,
@@ -189,6 +191,11 @@ export default Reducer = (state = initialState, action) => {
       return {
         ...state,
         data: [...state.data, action.payload],
+      };
+    case KEY:
+      return {
+        ...state,
+        key: action.payload,
       };
     default:
       return state;
