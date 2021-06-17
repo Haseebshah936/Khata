@@ -68,13 +68,14 @@ const DATA = [
 ];
 
 function UserData({ navigation }) {
-  const [data, setData] = useState();
-  const [isLoading, setLoading] = useState(true);
+  // const [data, setData] = useState();
+  const [isLoading, setLoading] = useState(false);
   const bannerID =
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const interstitialID =
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
   const state = useSelector((state) => state);
+  const data = state.Reducer.data;
   const dispatch = useDispatch();
 
   const instential = async () => {
@@ -90,11 +91,11 @@ function UserData({ navigation }) {
 
   useEffect(() => {
     instential();
-    const unsubscribe = fetch("https://reqres.in/api/users?page=2")
-      .then((response) => response.json())
-      .then((json) => setData(json.data))
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+    // const unsubscribe = fetch("https://reqres.in/api/users?page=2")
+    //   .then((response) => response.json())
+    //   .then((json) => setData(json.data))
+    //   .catch((err) => console.error(err))
+    //   .finally(() => setLoading(false));
     // return unsubscribe;
   }, []);
 
@@ -107,13 +108,14 @@ function UserData({ navigation }) {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <Client
-            avatar={item.avatar}
-            name={item.first_name}
-            phoneNo={item.last_name}
-            amountToPay={item.email}
+            avatar={item.uri}
+            name={item.userName}
+            phoneNo={item.phoneNo}
+            amountToPay={item.address}
             onPress={() => {
+              console.log(item.key);
               dispatch(setKey(item.key));
-              navigation.navigate("ThingsBought");
+              navigation.navigate("ThingsBought", item.data);
             }}
             renderRightActions={() => (
               <RenderRightAction onPress={() => alert("Are you sure")} />

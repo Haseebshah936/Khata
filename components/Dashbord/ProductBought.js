@@ -14,12 +14,12 @@ import { Swipeable } from "react-native-gesture-handler";
 function ProductBought({
   avatar,
   name,
-  phoneNo,
   amountToPay,
+  status,
   onPress,
   renderRightActions,
 }) {
-  let amountToPay1 = 10000;
+  // let amountToPay1 = 10000;
   return (
     <Swipeable renderRightActions={renderRightActions}>
       <TouchableOpacity
@@ -34,11 +34,11 @@ function ProductBought({
         <View style={styles.textContainer}>
           <View style={styles.subTextContainer}>
             <Text style={styles.text}>{name} </Text>
-            <Text style={styles.toPay}>AmountToPay </Text>
+            <Text style={styles.toPay}>AmountToPay</Text>
           </View>
           <View style={styles.subTextContainer}>
-            <Text style={styles.text}>03324298364</Text>
-            <Text style={styles.toPay}>{amountToPay1} /-Rs</Text>
+            <Text style={styles.text}>{status}</Text>
+            <Text style={styles.toPay}>{amountToPay} /-Rs</Text>
           </View>
           {/* <Text style={styles.email}> {amountToPay}</Text> */}
         </View>

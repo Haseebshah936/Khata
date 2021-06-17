@@ -54,17 +54,17 @@ const DATA = [
   },
 ];
 
-function ThingsBought({ navigation }) {
-  const [data, setData] = useState();
-  const [isLoading, setLoading] = useState(true);
+function ThingsBought({ navigation, route }) {
+  const data = route.params.data;
+  const [isLoading, setLoading] = useState(false);
   const [scrollEnable, setScrollEnable] = useState(true);
 
   useEffect(() => {
-    fetch("https://reqres.in/api/users?page=2")
-      .then((response) => response.json())
-      .then((json) => setData(json.data))
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+    // fetch("https://reqres.in/api/users?page=2")
+    //   .then((response) => response.json())
+    //   .then((json) => setData(json.data))
+    //   .catch((err) => console.error(err))
+    //   .finally(() => setLoading(false));
   }, []);
 
   // const stopScroll = () =>{
@@ -74,16 +74,16 @@ function ThingsBought({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={DATA}
+        data={data}
         keyExtractor={(item, index) => index.toString()}
         scrollEnabled={scrollEnable}
         renderItem={({ item }) => (
           <ProductBought
-            avatar={item.avatar}
-            name={item.first_name}
-            phoneNo={item.last_name}
-            amountToPay={item.email}
-            onPress={() => navigation.navigate("ViewProduct")}
+            avatar={item.uri}
+            name={item.productName}
+            status={item.status}
+            amountToPay={item.price}
+            onPress={() => navigation.navigate("ViewProduct", item)}
             renderRightActions={() => (
               <RenderRightActionProduct
                 onPress={() => {

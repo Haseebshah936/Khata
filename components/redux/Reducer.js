@@ -16,6 +16,7 @@ import {
   KHATAURI,
   ADDDATA,
   KEY,
+  ADDPRODUCT,
 } from "./ActionTypes";
 
 const initialState = {
@@ -33,78 +34,52 @@ const initialState = {
   khataImage: null,
   offlineNote: [
     {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
+      key: 0,
+      userName: "name",
+      phoneNo: "phoneNo",
+      address: "address",
+      uri: null,
+      data: [
+        {
+          key: 0,
+          productName: "Kala",
+          price: 0,
+          description: "",
+          uri: null,
+        },
+        {
+          key: 1,
+          productName: "Kala",
+          price: 1,
+          description: "",
+          uri: null,
+        },
+      ],
     },
   ],
   data: [
     {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
-    },
-    {
-      first_name: "Haseeb",
+      key: 0,
+      userName: "name",
+      phoneNo: "phoneNo",
+      address: "address",
+      uri: null,
+      data: [
+        {
+          key: 0,
+          productName: "Kala",
+          price: 0,
+          description: "",
+          uri: null,
+        },
+        {
+          key: 1,
+          productName: "Kala",
+          price: 1,
+          description: "",
+          uri: null,
+        },
+      ],
     },
   ],
 };
@@ -191,6 +166,10 @@ export default Reducer = (state = initialState, action) => {
       return {
         ...state,
         data: [...state.data, action.payload],
+      };
+    case ADDPRODUCT:
+      return {
+        ...action.payload,
       };
     case KEY:
       return {

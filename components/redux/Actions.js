@@ -193,13 +193,10 @@ export const addKhataAccount = (data) => {
   };
 };
 
-export const addKhataProductData = (key, data) => {
+export const addProductData = (data) => {
   return {
     type: ADDPRODUCT,
-    payload: {
-      key,
-      data,
-    },
+    payload: data,
   };
 };
 
@@ -581,10 +578,13 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
   };
 };
 
-export const addKhataProduct = (name, price, description = "", uri) => {
+export const addProduct = (productName, price, description = "", uri) => {
   return async (dispatch) => {
     let id;
-    const data = Store.getState().Reducer.data.filter((m) => m.key == key).data;
+    const key = Store.getState().Reducer.key;
+    const state = Store.getState().Reducer;
+    console.log("KEY" + key);
+    const data = state.data[key].data;
     // console.log(values);
     alert("IN Side Action addKhataProduct" + data);
     const length = data.length;
@@ -595,30 +595,42 @@ export const addKhataProduct = (name, price, description = "", uri) => {
       id = data[data.length - 1].key + 1;
     }
     // id = 0;
-    const khataProfileProduct = {
+    const profileProduct = {
       key: id,
-      userName: name,
+      productName,
+      status: false,
       price,
       description,
       uri,
     };
-    // console.log("IN Side Action addKhataProfile" + khataProfileProduct.key);
-    dispatch(addKhataAccount(khataProfileProduct));
-    uploadKhataImage(uri, id)
-      .then((uri) => {
-        dispatch(setKhataImage(uri));
-        db.collection(userId)
-          .add({ ...khataProfileProduct, uri })
-          .then(() => {
-            alert("User added!");
-          });
-      })
-      .then(() => dispatch(removeKhataImage()));
+    // console.log("Product", profileProduct);
+    const productData = [...data, profileProduct];
+    const profile = {
+      ...state,
+      data: [
+        ...state.data.map((profile) => {
+          profile.key == key ? (profile.data = productData) : profile;
+        }),
+      ],
+    };
+    console.log("IN Side Action addKhataProfile" + profile);
+    // dispatch(addProductData(profile));
+    // uploadKhataImage(uri, id)
+    //   .then((uri) => {
+    //     dispatch(setKhataImage(uri));
+    //     db.collection(userId)
+    //       .add({ ...profileProduct, uri })
+    //       .then(() => {
+    //         alert("User added!");
+    //       });
+    //   })
+    //   .then(() => dispatch(removeKhataImage()));
+    dispatch(removeKhataImage());
     await SecureStore.setItemAsync(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
-    console.log("Let Check State" + Store.getState().Reducer);
+    console.log("Let Check State of Products" + Store.getState().Reducer.data);
   };
 };
 

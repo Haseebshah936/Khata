@@ -53,7 +53,6 @@ function AddKhata({ navigation }) {
   // const [uri, setUri] = useState(null);
   const store = useSelector((state) => state);
   const uri = store.Reducer.khataImage;
-  const data = store.Reducer.data;
   const hold =
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
   const dispatch = useDispatch();
@@ -81,13 +80,7 @@ function AddKhata({ navigation }) {
           initialValues={{ name: "", phoneNo: "", address: "" }}
           onSubmit={(values) => {
             dispatch(
-              addKhataProfile(
-                values.name,
-                values.phoneNo,
-                values.address,
-                uri,
-                data
-              )
+              addKhataProfile(values.name, values.phoneNo, values.address, uri)
             );
           }}
           validationSchema={validationSchema}

@@ -28,6 +28,8 @@ import {
   setTestDeviceIDAsync,
 } from "expo-ads-admob";
 import { android, ios } from "../../APIKeys";
+import { addProduct } from "../redux/Actions";
+import { useDispatch } from "react-redux";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Product Name"),
@@ -66,6 +68,8 @@ function AddProduct({ navigation }) {
     }
   };
 
+  const dispatch = useDispatch();
+
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
       <View style={styles.loginTextTopContainer}>
@@ -80,12 +84,7 @@ function AddProduct({ navigation }) {
           initialValues={{ name: "", price: "", description: "" }}
           onSubmit={(values) => {
             dispatch(
-              addKhataProfile(
-                values.name,
-                values.price,
-                values.description,
-                uri
-              )
+              addProduct(values.name, values.price, values.description, uri)
             );
           }}
           validationSchema={validationSchema}
