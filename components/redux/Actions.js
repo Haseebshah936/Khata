@@ -634,7 +634,7 @@ export const addProduct = (productName, price, description = "", uri) => {
         //   });
       })
       .then(() => dispatch(removeKhataImage()));
-    dispatch(removeKhataImage());
+    // dispatch(removeKhataImage());
     await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
@@ -703,21 +703,23 @@ export const remove = (key) => {
   return async (dispatch) => {
     const state = Store.getState().Reducer;
     const data = state.data.filter((m) => m.key != key);
+    const productData = state.data.filter((m) => m.key == key)[0].data;
     let userId = state.userID;
-    var uid = userId + "/";
-    let l;
+    let documentID;
     db.collection(userId)
       .where("key", "==", key)
       .get()
       .then((querySnapshot) => {
         // console.log(querySnapshot.size);
-        querySnapshot.forEach((documentSnapshot) => (l = documentSnapshot.id));
-        console.log(l);
+        querySnapshot.forEach(
+          (documentSnapshot) => (documentID = documentSnapshot.id)
+        );
+        console.log(documentID);
       })
       .then(() => {
-        if (l) {
+        if (documentID) {
           db.collection(userId)
-            .doc(l)
+            .doc(documentID)
             .delete()
             .then(() => {
               console.log("User deleted!");
@@ -726,23 +728,28 @@ export const remove = (key) => {
               console.log(err);
             });
 
-          // storage
-          //   .ref()
-          //   .child("Images/" + uid + key)
-          //   .delete()
-          //   .then(() => {
-          //     console.log("File Deleted");
-          //   })
-          //   .catch((error) => console.log(error))
-          //   .finally(() => {
-          //     setAdded(added + 1);
-          //   });
+          storage
+            .ref()
+            .child("KhataImages/" + userId + "/" + key + "/" + key)
+            .delete()
+            .catch(console.log);
+
+          productData.forEach((product) => {
+            const id = product.key;
+            storage
+              .ref()
+              .child(
+                "KhataImages/" + userId + "/" + key + "/" + "productImage/" + id
+              )
+              .delete()
+              .catch(console.log);
+          });
         }
       });
     dispatch(addProductData(data));
-    // await AsyncStorage.setItem(
-    //   "AppSKHATA786",
-    //   JSON.stringify(Store.getState().Reducer)
-    // );
+    await AsyncStorage.setItem(
+      "AppSKHATA786",
+      JSON.stringify(Store.getState().Reducer)
+    );
   };
 };
