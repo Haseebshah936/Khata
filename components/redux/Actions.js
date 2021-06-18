@@ -41,6 +41,7 @@ import {
 import { useSelector } from "react-redux";
 import { add } from "react-native-reanimated";
 import Store from "./Store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const increment = (num = 1) => {
   return {
@@ -202,9 +203,9 @@ export const addProductData = (data) => {
 
 export const loginOffline = () => {
   return async (dispatch) => {
-    const result = JSON.parse(await SecureStore.getItemAsync("AppSKHATA786"));
+    const result = JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
     if (result || result != null) {
-      state = result;
+      const state = result;
       // console.log("Result from login offlie" + result);
       dispatch(
         loginSuccessFull(
@@ -253,10 +254,7 @@ export const loginWithFacebook = () => {
               password: null,
             };
 
-            await SecureStore.setItemAsync(
-              "AppSKHATA786",
-              JSON.stringify(state)
-            );
+            await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
 
             dispatch(
               loginSuccessFull(
@@ -311,10 +309,7 @@ export const loginWithGoogle = () => {
               email: user.email,
               password: null,
             };
-            await SecureStore.setItemAsync(
-              "AppSKHATA786",
-              JSON.stringify(state)
-            );
+            await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
             dispatch(
               loginSuccessFull(
                 state.userID,
@@ -344,7 +339,7 @@ export const signOut = () => {
       .signOut()
       .then(async () => {
         const state = null;
-        await SecureStore.setItemAsync("AppSKHATA786", JSON.stringify(state));
+        await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
         dispatch(logOut());
       })
       .catch((error) => {
@@ -371,7 +366,7 @@ export const loginWithEmail = (email, password) => {
             email,
             password,
           };
-          await SecureStore.setItemAsync("AppSKHATA786", JSON.stringify(state));
+          await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
           dispatch(
             loginSuccessFull(
               state.userID,
@@ -481,7 +476,7 @@ export const register = (
           //     offlineNote: [],
           //   };
 
-          //   await SecureStore.setItemAsync(
+          //   await AsyncStorage.setItem(
           //     "AppSKHATA786",
           //     JSON.stringify(state)
           //   );
@@ -513,13 +508,11 @@ export const register = (
 
 export const addKhataImage = () => {
   return async (dispatch) => {
-    // console.log("Add Image");
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.2,
     });
     if (!result.cancelled) {
-      // console.log(result.uri);
       dispatch(setKhataImage(result.uri));
     }
   };
@@ -559,17 +552,15 @@ export const uploadProductImage = async (uri, id) => {
 export const addKhataProfile = (name, phoneNo, address, uri) => {
   return async (dispatch) => {
     let id;
-    const data = Store.getState().Reducer.data;
-    // console.log(values);
-    // alert("IN Side Action addKhataProfile" + data);
+    const state = Store.getState().Reducer;
+    let userId = state.userID;
+    const data = state.data;
     const length = data.length;
-    let userId = auth.currentUser.uid;
     if (data.length == 0) {
       id = 0;
     } else {
       id = data[data.length - 1].key + 1;
     }
-    // id = 0;
     const khataProfileData = {
       key: id,
       userName: name,
@@ -578,7 +569,6 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
       uri: uri,
       data: [],
     };
-    // console.log("IN Side Action addKhataProfile" + khataProfileData.key);
     dispatch(addKhataAccount(khataProfileData));
     uploadKhataImage(uri, id)
       .then((uri) => {
@@ -590,11 +580,10 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
           });
       })
       .then(() => dispatch(removeKhataImage()));
-    await SecureStore.setItemAsync(
+    await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
-    // console.log("Let Check State" + Store.getState().Reducer);
   };
 };
 
@@ -603,18 +592,14 @@ export const addProduct = (productName, price, description = "", uri) => {
     let id;
     const key = Store.getState().Reducer.key;
     const state = Store.getState().Reducer;
-    // console.log("KEY" + key);
     const data = state.data.filter((m) => m.key == key)[0].data;
-    // console.log(values);
-    // alert("IN Side Action addKhataProduct" + data);
     const length = state.data.length;
-    let userId = auth.currentUser.uid;
+    let userId = state.userID;
     if (data.length == 0) {
       id = 0;
     } else {
       id = data[data.length - 1].key + 1;
     }
-    // id = 0;
     const profileProduct = {
       key: id,
       productName,
@@ -623,16 +608,7 @@ export const addProduct = (productName, price, description = "", uri) => {
       description,
       uri,
     };
-    // console.log("Product", profileProduct);
     const productData = [...data, profileProduct];
-    // const profile = {
-    //   ...state,
-    //   data: state.data.map((profile) => {
-    //     profile.key == key
-    //       ? (profile.data = [...data, profileProduct])
-    //       : profile;
-    //   }),
-    // };
     let profile = [];
     for (let i = 0; i < length; i++) {
       if (state.data[i].key == key) {
@@ -647,9 +623,6 @@ export const addProduct = (productName, price, description = "", uri) => {
         });
       }
     }
-    // console.log("IN Side Action addKhataProfile", profile);
-    // console.log("Updated state", state);
-    console.log("Orignal state", state);
     dispatch(addProductData(profile));
     uploadProductImage(uri, id)
       .then((uri) => {
@@ -662,12 +635,10 @@ export const addProduct = (productName, price, description = "", uri) => {
       })
       .then(() => dispatch(removeKhataImage()));
     dispatch(removeKhataImage());
-    await SecureStore.setItemAsync(
+    await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
-    console.log("Updated state", state);
-    // console.log("Let Check State of Products" + Store.getState().Reducer.data);
   };
 };
 
@@ -678,39 +649,97 @@ export const setKey = (key) => {
   };
 };
 
-// export const remove = (key) => {
-//   // console.log(key)
-//   var uid = userId + "/";
-//   console.log(key);
-//   let l;
-//   db.collection(userId)
-//     .where("key", "==", key)
-//     .get()
-//     .then((querySnapshot) => {
-//       console.log(querySnapshot.size);
-//       querySnapshot.forEach((documentSnapshot) => (l = documentSnapshot.id));
-//       console.log(l);
-//     })
-//     .then(() => {
-//       if (l) {
-//         db.collection(userId)
-//           .doc(l)
-//           .delete()
-//           .then(() => {
-//             console.log("User deleted!");
-//           });
+export const setStatus = (productKey) => {
+  return async (dispatch) => {
+    const key = Store.getState().Reducer.key;
+    const state = Store.getState().Reducer;
+    const data = state.data.filter((m) => m.key == key)[0].data;
+    const length = state.data.length;
+    let userId = state.userID;
+    const productData = [];
+    data.forEach((product) => {
+      if (product.key == productKey) {
+        const p = {
+          ...product,
+          status: true,
+        };
+        productData.push(p);
+      } else {
+        productData.push({
+          ...product,
+        });
+      }
+    });
 
-//         storage
-//           .ref()
-//           .child("Images/" + uid + key)
-//           .delete()
-//           .then(() => {
-//             console.log("File Deleted");
-//           })
-//           .catch((error) => console.log(error))
-//           .finally(() => {
-//             setAdded(added + 1);
-//           });
-//       }
-//     });
-// };
+    // productData.map((p) => (p.key == productKey ? (p.status = true) : p));
+    let profile = [];
+    for (let i = 0; i < length; i++) {
+      if (state.data[i].key == key) {
+        profile.push({
+          ...state.data[i],
+          data: [...productData],
+        });
+      } else {
+        profile.push({
+          ...state.data[i],
+          data: [...state.data[i].data],
+        });
+      }
+    }
+    dispatch(addProductData(profile));
+    // db.collection(userId)
+    //   .add({ ...profileProduct, uri })
+    //   .then(() => {
+    //     alert("User added!");
+    //   });
+    await AsyncStorage.setItem(
+      "AppSKHATA786",
+      JSON.stringify(Store.getState().Reducer)
+    );
+  };
+};
+
+export const remove = (key) => {
+  return async (dispatch) => {
+    const state = Store.getState().Reducer;
+    const data = state.data.filter((m) => m.key != key);
+    let userId = state.userID;
+    var uid = userId + "/";
+    let l;
+    db.collection(userId)
+      .where("key", "==", key)
+      .get()
+      .then((querySnapshot) => {
+        console.log(querySnapshot.size);
+        querySnapshot.forEach((documentSnapshot) => (l = documentSnapshot.id));
+        console.log(l);
+      })
+      .then(() => {
+        if (l) {
+          db.collection(userId)
+            .doc(l)
+            .delete()
+            .then(() => {
+              console.log("User deleted!");
+            });
+
+          // storage
+          //   .ref()
+          //   .child("Images/" + uid + key)
+          //   .delete()
+          //   .then(() => {
+          //     console.log("File Deleted");
+          //   })
+          //   .catch((error) => console.log(error))
+          //   .finally(() => {
+          //     setAdded(added + 1);
+          //   });
+        }
+      });
+    dispatch(addProductData(profile));
+    await AsyncStorage.setItem(
+      "AppSKHATA786",
+      JSON.stringify(Store.getState().Reducer)
+    );
+  };
+};

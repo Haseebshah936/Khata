@@ -9,11 +9,14 @@ import {
   FlatList,
   Button,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import Constants from "expo-constants";
 import { AntDesign } from "@expo/vector-icons";
 import ProductBought from "./ProductBought";
 import RenderRightActionProduct from "./RenderRightActionProduct";
+import { useDispatch, useSelector } from "react-redux";
+import { setStatus } from "../redux/Actions";
 
 const DATA = [
   {
@@ -55,10 +58,14 @@ const DATA = [
 ];
 
 function ThingsBought({ navigation, route }) {
-  const data = route.params.data;
+  // const data = route.params.data;
   const [isLoading, setLoading] = useState(false);
   const [scrollEnable, setScrollEnable] = useState(true);
-  // console.log(data);
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.Reducer);
+  const key = state.key;
+  const data = state.data.filter((m) => m.key == key)[0].data;
+  // console.log(data1);
 
   useEffect(() => {
     // fetch("https://reqres.in/api/users?page=2")
@@ -88,7 +95,20 @@ function ThingsBought({ navigation, route }) {
             renderRightActions={() => (
               <RenderRightActionProduct
                 onPress={() => {
-                  alert("Are you sure");
+                  Alert.alert(
+                    "Confirmation",
+                    "Are you sure the payment for the product is done",
+                    [
+                      {
+                        text: "No",
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => dispatch(setStatus(item.key)),
+                      },
+                    ]
+                  );
+
                   setScrollEnable(true);
                 }}
               />
