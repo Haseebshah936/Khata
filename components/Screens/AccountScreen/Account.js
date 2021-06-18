@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -32,6 +32,7 @@ function Account({ navigation }) {
   const bannerID =
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const dispatch = useDispatch();
+  const [uri, setUri] = useState(store.Reducer.profilePic);
   // const signOut = () => {
   //   auth
   //     .signOut()
@@ -50,9 +51,17 @@ function Account({ navigation }) {
   // console.log("Phone NO" + auth.currentUser.phoneNumber);
 
   // console.log("State", store.Reducer);
-  // const check = () => {
-  //   console.log(user);
-  // };
+  useEffect(() => {
+    try {
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          setUri(user.photoURL);
+        }
+      });
+    } catch (error) {
+      setUri(store.Reducer.profilePic);
+    }
+  }, []);
   return (
     <SafeAreaView style={styles1.container}>
       <View
@@ -66,7 +75,7 @@ function Account({ navigation }) {
         ]}
       >
         <Profile
-          image={store.Reducer.profilePic}
+          image={uri}
           userName={store.Reducer.displayName}
           fontSize={12}
           fontColor={"white"}

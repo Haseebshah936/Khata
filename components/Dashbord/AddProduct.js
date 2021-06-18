@@ -28,8 +28,8 @@ import {
   setTestDeviceIDAsync,
 } from "expo-ads-admob";
 import { android, ios } from "../../APIKeys";
-import { addProduct } from "../redux/Actions";
-import { useDispatch } from "react-redux";
+import { addKhataImage, addProduct } from "../redux/Actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Product Name"),
@@ -44,36 +44,37 @@ function AddProduct({ navigation }) {
   ]);
   const bannerID =
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
-  const [uri, setUri] = useState(
-    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641"
-  );
-  const login = (values) => {
-    console.log(values);
-    let id = auth.currentUser.uid;
-    db.collection(id).doc(0).set({
-      userName: values.name,
-      price: values.price,
-      description: values.description,
-    });
-    alert("Login Successfull");
-    navigation.replace("Data");
-    console.log(auth.currentUser);
-  };
-  const addImage = async () => {
-    console.log("Add Image");
-    // let result = await ImagePicker.launchImageLibraryAsync();
-    let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
-    if (!result.cancelled) {
-      setUri(result.uri);
-    }
-  };
+  const store = useSelector((state) => state);
+  const uri = store.Reducer.khataImage;
+  const hold =
+    "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
 
   const dispatch = useDispatch();
+  // const login = (values) => {
+  //   console.log(values);
+  //   let id = auth.currentUser.uid;
+  //   db.collection(id).doc(0).set({
+  //     userName: values.name,
+  //     price: values.price,
+  //     description: values.description,
+  //   });
+  //   alert("Login Successfull");
+  //   navigation.replace("Data");
+  //   console.log(auth.currentUser);
+  // };
+  // const addImage = async () => {
+  //   // console.log("Add Image");
+  //   // let result = await ImagePicker.launchImageLibraryAsync();
+  //   let result = await ImagePicker.launchCameraAsync({ quality: 0.2 });
+  //   if (!result.cancelled) {
+  //     setUri(result.uri);
+  //   }
+  // };
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
       <View style={styles.loginTextTopContainer}>
-        <Text style={styles.loginText}>Add To Khata</Text>
+        <Text style={styles.loginText}>Add Product</Text>
         <View style={[styles.circleContainer, { left: 30 }]}>
           <View style={styles.loginTextTopContainerSmallCircle} />
           <View style={styles.loginTextTopContainerBigCircle} />
@@ -102,16 +103,27 @@ function AddProduct({ navigation }) {
                   <TouchableOpacity
                     style={styles.profilePic}
                     activeOpacity={0.6}
-                    onPress={() => addImage()}
+                    onPress={() => dispatch(addKhataImage())}
                   >
-                    <Image
-                      resizeMethod={"resize"}
-                      source={{
-                        width: 120,
-                        height: 120,
-                        uri: uri,
-                      }}
-                    />
+                    {uri ? (
+                      <Image
+                        resizeMethod={"resize"}
+                        source={{
+                          width: 120,
+                          height: 120,
+                          uri: uri,
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        resizeMethod={"resize"}
+                        source={{
+                          width: 120,
+                          height: 120,
+                          uri: hold,
+                        }}
+                      />
+                    )}
                   </TouchableOpacity>
                   <View style={{ flex: 0.9 }}>
                     <View style={styles.productContainer}>

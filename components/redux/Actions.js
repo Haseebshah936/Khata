@@ -409,13 +409,13 @@ export const uploadImage = async (uri, id) => {
 
 export const addImage = () => {
   return async (dispatch) => {
-    console.log("Add Image");
+    // console.log("Add Image");
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.2,
     });
     if (!result.cancelled) {
-      console.log(result.uri);
+      // console.log(result.uri);
       dispatch(setProfilePic(result.uri));
     }
   };
@@ -574,7 +574,7 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
-    console.log("Let Check State" + Store.getState().Reducer);
+    // console.log("Let Check State" + Store.getState().Reducer);
   };
 };
 
@@ -583,11 +583,11 @@ export const addProduct = (productName, price, description = "", uri) => {
     let id;
     const key = Store.getState().Reducer.key;
     const state = Store.getState().Reducer;
-    console.log("KEY" + key);
-    const data = state.data[key].data;
+    // console.log("KEY" + key);
+    const data = state.data.filter((m) => m.key == key)[0].data;
     // console.log(values);
-    alert("IN Side Action addKhataProduct" + data);
-    const length = data.length;
+    // alert("IN Side Action addKhataProduct" + data);
+    const length = state.data.length;
     let userId = auth.currentUser.uid;
     if (data.length == 0) {
       id = 0;
@@ -605,16 +605,33 @@ export const addProduct = (productName, price, description = "", uri) => {
     };
     // console.log("Product", profileProduct);
     const productData = [...data, profileProduct];
-    const profile = {
-      ...state,
-      data: [
-        ...state.data.map((profile) => {
-          profile.key == key ? (profile.data = productData) : profile;
-        }),
-      ],
-    };
-    console.log("IN Side Action addKhataProfile" + profile);
-    // dispatch(addProductData(profile));
+    // const profile = {
+    //   ...state,
+    //   data: state.data.map((profile) => {
+    //     profile.key == key
+    //       ? (profile.data = [...data, profileProduct])
+    //       : profile;
+    //   }),
+    // };
+    let profile = [];
+    for (let i = 0; i < length; i++) {
+      if (state.data[i].key == key) {
+        profile.push({
+          ...state.data[i],
+          data: [...state.data[i].data, profileProduct],
+        });
+      } else {
+        profile.push({
+          ...state.data[i],
+          data: [...state.data[i].data],
+        });
+      }
+    }
+    // console.log("IN Side Action addKhataProfile", profile);
+    // console.log("Updated state", state);
+    console.log("Orignal state", state);
+    dispatch(addProductData(profile));
+    console.log("Updated state", state);
     // uploadKhataImage(uri, id)
     //   .then((uri) => {
     //     dispatch(setKhataImage(uri));
@@ -630,7 +647,7 @@ export const addProduct = (productName, price, description = "", uri) => {
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
-    console.log("Let Check State of Products" + Store.getState().Reducer.data);
+    // console.log("Let Check State of Products" + Store.getState().Reducer.data);
   };
 };
 

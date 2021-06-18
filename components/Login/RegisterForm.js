@@ -49,16 +49,16 @@ function RegisterForm({ navigation }) {
   const [val, setVal] = useState();
   const sendVerificationCode = async (phoneNumber) => {
     try {
-      console.log(phoneNumber);
+      // console.log(phoneNumber);
       const verificationId = await phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current
       );
-      console.log("Verification" + verificationId);
+      // console.log("Verification" + verificationId);
       setVerificationId(verificationId);
       showMessage("Verification code has been sent to your phone.");
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       showMessage(`Error: ${err.message}`);
     }
   };
@@ -68,7 +68,7 @@ function RegisterForm({ navigation }) {
         verificationId,
         verificationCode
       );
-      console.log(credential);
+      // console.log(credential);
       dispatch(
         register(val.email, val.password, val.userName, uri, credential)
       );

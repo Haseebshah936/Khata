@@ -58,6 +58,7 @@ function ThingsBought({ navigation, route }) {
   const data = route.params.data;
   const [isLoading, setLoading] = useState(false);
   const [scrollEnable, setScrollEnable] = useState(true);
+  // console.log(data);
 
   useEffect(() => {
     // fetch("https://reqres.in/api/users?page=2")

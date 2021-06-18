@@ -87,7 +87,7 @@ function UserData({ navigation }) {
       await AdMobInterstitial.showAdAsync();
   };
 
-  console.log(state);
+  // console.log(state);
 
   useEffect(() => {
     instential();
@@ -113,9 +113,9 @@ function UserData({ navigation }) {
             phoneNo={item.phoneNo}
             amountToPay={item.address}
             onPress={() => {
-              console.log(item.key);
+              // console.log(item.key);
               dispatch(setKey(item.key));
-              navigation.navigate("ThingsBought", item.data);
+              navigation.navigate("ThingsBought", item);
             }}
             renderRightActions={() => (
               <RenderRightAction onPress={() => alert("Are you sure")} />
