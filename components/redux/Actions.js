@@ -529,7 +529,27 @@ export const uploadKhataImage = async (uri, id) => {
   if (uri) {
     const response = await fetch(uri);
     const blob = await response.blob();
-    let ref = storage.ref().child("KhataImages/" + id);
+    const userId = Store.getState().Reducer.userID;
+    let ref = storage
+      .ref()
+      .child("KhataImages/" + userId + "/" + id + "/" + id);
+    await ref.put(blob);
+    return ref.getDownloadURL();
+  }
+  return null;
+};
+
+export const uploadProductImage = async (uri, id) => {
+  if (uri) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const state = Store.getState().Reducer;
+    const userId = state.userID;
+    const key = state.key;
+
+    let ref = storage
+      .ref()
+      .child("KhataImages/" + userId + "/" + key + "/" + "productImage/" + id);
     await ref.put(blob);
     return ref.getDownloadURL();
   }
@@ -631,22 +651,22 @@ export const addProduct = (productName, price, description = "", uri) => {
     // console.log("Updated state", state);
     console.log("Orignal state", state);
     dispatch(addProductData(profile));
-    console.log("Updated state", state);
-    // uploadKhataImage(uri, id)
-    //   .then((uri) => {
-    //     dispatch(setKhataImage(uri));
-    //     db.collection(userId)
-    //       .add({ ...profileProduct, uri })
-    //       .then(() => {
-    //         alert("User added!");
-    //       });
-    //   })
-    //   .then(() => dispatch(removeKhataImage()));
+    uploadProductImage(uri, id)
+      .then((uri) => {
+        // dispatch(setKhataImage(uri));
+        // db.collection(userId)
+        //   .add({ ...profileProduct, uri })
+        //   .then(() => {
+        //     alert("User added!");
+        //   });
+      })
+      .then(() => dispatch(removeKhataImage()));
     dispatch(removeKhataImage());
     await SecureStore.setItemAsync(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
+    console.log("Updated state", state);
     // console.log("Let Check State of Products" + Store.getState().Reducer.data);
   };
 };

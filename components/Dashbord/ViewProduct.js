@@ -2,7 +2,9 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet, SafeAreaView, Text } from "react-native";
 
-function ViewProduct(props) {
+function ViewProduct({ route }) {
+  const data = route.params;
+  console.log(data);
   return (
     <SafeAreaView style={styles.container}>
       <Text>ViewProduct</Text>
