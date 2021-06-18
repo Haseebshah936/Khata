@@ -97,7 +97,7 @@ function ThingsBought({ navigation, route }) {
                 onPress={() => {
                   Alert.alert(
                     "Confirmation",
-                    "Are you sure the payment for the product is done",
+                    "Are you sure the payment for the product is done?",
                     [
                       {
                         text: "No",

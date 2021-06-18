@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import Constants from "expo-constants";
 import Client from "./Client";
@@ -26,7 +27,7 @@ import {
   setTestDeviceIDAsync,
 } from "expo-ads-admob";
 import { useDispatch, useSelector } from "react-redux";
-import { setKey } from "../redux/Actions";
+import { remove, setKey } from "../redux/Actions";
 
 const DATA = [
   {
@@ -113,12 +114,27 @@ function UserData({ navigation }) {
             phoneNo={item.phoneNo}
             amountToPay={item.address}
             onPress={() => {
-              // console.log(item.key);
               dispatch(setKey(item.key));
               navigation.navigate("ThingsBought", item);
             }}
             renderRightActions={() => (
-              <RenderRightAction onPress={() => alert("Are you sure")} />
+              <RenderRightAction
+                onPress={() =>
+                  Alert.alert(
+                    "Confirmation",
+                    "Are you sure want to remove the Khata?",
+                    [
+                      {
+                        text: "No",
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => dispatch(remove(item.key)),
+                      },
+                    ]
+                  )
+                }
+              />
             )}
           />
         )}

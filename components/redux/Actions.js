@@ -710,7 +710,7 @@ export const remove = (key) => {
       .where("key", "==", key)
       .get()
       .then((querySnapshot) => {
-        console.log(querySnapshot.size);
+        // console.log(querySnapshot.size);
         querySnapshot.forEach((documentSnapshot) => (l = documentSnapshot.id));
         console.log(l);
       })
@@ -721,6 +721,9 @@ export const remove = (key) => {
             .delete()
             .then(() => {
               console.log("User deleted!");
+            })
+            .catch((err) => {
+              console.log(err);
             });
 
           // storage
@@ -736,10 +739,10 @@ export const remove = (key) => {
           //   });
         }
       });
-    dispatch(addProductData(profile));
-    await AsyncStorage.setItem(
-      "AppSKHATA786",
-      JSON.stringify(Store.getState().Reducer)
-    );
+    dispatch(addProductData(data));
+    // await AsyncStorage.setItem(
+    //   "AppSKHATA786",
+    //   JSON.stringify(Store.getState().Reducer)
+    // );
   };
 };
