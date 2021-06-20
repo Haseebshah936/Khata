@@ -69,7 +69,7 @@ function Account({ navigation }) {
           styles1.design,
           {
             backgroundColor: "#ff7800",
-            elevation: 60,
+            elevation: 20,
             paddingTop: Constants.statusBarHeight,
           },
         ]}
@@ -84,7 +84,12 @@ function Account({ navigation }) {
       </View>
 
       <View style={styles1.design1}>
-        <View style={[styles1.design1, { elevation: 10, bottom: 10 }]}>
+        <View
+          style={[
+            styles1.design1,
+            { elevation: 0, bottom: 10, borderBottomWidth: 0.2 },
+          ]}
+        >
           <Profile
             iconComponent={
               <Icon

@@ -14,8 +14,12 @@ const Stack = createStackNavigator();
 
 function AppNavigator(props) {
   return (
-    <Stack.Navigator headerMode={"none"} mode={"modal"}>
-      <Stack.Screen name="Main" component={UserData} />
+    <Stack.Navigator mode={"modal"}>
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="Main"
+        component={UserData}
+      />
       <Stack.Screen name="ThingsBought" component={ThingsBought} />
       <Stack.Screen name="ViewProduct" component={ViewProduct} />
       <Stack.Screen name="AddProduct" component={AddProduct} />
