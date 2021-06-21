@@ -11,7 +11,7 @@ if (firebase.apps.length === 0) {
 } else {
   app = firebase.app();
 }
-
+const firdb = firebase.firestore;
 const db = firebase.firestore();
 const db1 = firebase.database();
 const auth = firebase.auth();
@@ -47,4 +47,5 @@ export {
   phoneProvider,
   phoneAuthProvider,
   actionCodeSettings,
+  firdb,
 };

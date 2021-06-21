@@ -3,6 +3,7 @@ import {
   auth,
   db,
   fbAuthProvider,
+  firdb,
   googleAuthProvider,
   storage,
 } from "../../firebase";
@@ -42,6 +43,8 @@ import { useSelector } from "react-redux";
 import { add } from "react-native-reanimated";
 import Store from "./Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Network from "expo-network";
+import { Alert } from "react-native";
 
 export const increment = (num = 1) => {
   return {
@@ -266,6 +269,7 @@ export const loginWithFacebook = () => {
                 state.data
               )
             );
+            dispatch(loadData());
           })
           .catch((error) => {
             alert(error);
@@ -320,6 +324,7 @@ export const loginWithGoogle = () => {
                 state.data
               )
             );
+            dispatch(loadData());
           })
           .catch((error) => {
             alert(error);
@@ -379,9 +384,25 @@ export const loginWithEmail = (email, password) => {
               state.password
             )
           );
+          dispatch(loadData());
         } else {
-          alert(
-            "Account exist but Email is Not verified. Verify your email first or forget password to fix it."
+          Alert.alert(
+            "Email Verfication",
+            "A verification link is already sent to your email. Please verify your email to login.",
+            [
+              {
+                text: "Re-Send",
+                onPress: () => {
+                  user.sendEmailVerification() /
+                    then(() => {
+                      console.log("Sent");
+                    });
+                },
+              },
+              {
+                text: "OK",
+              },
+            ]
           );
         }
       })
@@ -624,16 +645,35 @@ export const addProduct = (productName, price, description = "", uri) => {
       }
     }
     dispatch(addProductData(profile));
-    uploadProductImage(uri, id)
-      .then((uri) => {
-        // dispatch(setKhataImage(uri));
-        // db.collection(userId)
-        //   .add({ ...profileProduct, uri })
-        //   .then(() => {
-        //     alert("User added!");
-        //   });
-      })
-      .then(() => dispatch(removeKhataImage()));
+    uploadProductImage(uri, id).then((uri) => {
+      dispatch(setKhataImage(uri));
+      // console.log(userId + " " + key);
+      let documentID;
+      db.collection(userId)
+        .where("key", "==", key)
+        .get()
+        .then((querySnapshot) => {
+          // console.log(querySnapshot.size);
+          querySnapshot.forEach(
+            (documentSnapshot) => (documentID = documentSnapshot.id)
+          );
+          // console.log(documentID);
+        })
+        .then(() => {
+          db.collection(userId)
+            .doc(documentID)
+            .update({
+              data: firdb.FieldValue.arrayUnion({
+                ...profileProduct,
+                uri,
+              }),
+            });
+        })
+        .then(() => alert("Product added"))
+        .catch(console.log)
+        .then(() => dispatch(removeKhataImage()));
+    });
+
     // dispatch(removeKhataImage());
     await AsyncStorage.setItem(
       "AppSKHATA786",
@@ -687,11 +727,27 @@ export const setStatus = (productKey) => {
       }
     }
     dispatch(addProductData(profile));
-    // db.collection(userId)
-    //   .add({ ...profileProduct, uri })
-    //   .then(() => {
-    //     alert("User added!");
-    //   });
+    console.log(userId + " " + key);
+    let documentID;
+    db.collection(userId)
+      .where("key", "==", key)
+      .get()
+      .then((querySnapshot) => {
+        // console.log(querySnapshot.size);
+        querySnapshot.forEach(
+          (documentSnapshot) => (documentID = documentSnapshot.id)
+        );
+        console.log(documentID);
+      })
+      .then(() => {
+        db.collection(userId).doc(documentID).update({
+          data: productData,
+        });
+      })
+      .then(() => alert("Product added"))
+      .catch(console.log)
+      .then(() => dispatch(removeKhataImage()));
+
     await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
@@ -751,5 +807,48 @@ export const remove = (key) => {
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
+  };
+};
+
+const check = async () => {
+  let { isConnected } = await Network.getNetworkStateAsync();
+  return isConnected;
+};
+
+export const loadData = () => {
+  return async (dispatch) => {
+    let array = [];
+    check().then((isConnected) => {
+      console.log("Is Connected Status", isConnected);
+      if (isConnected) {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            const userID = user.uid;
+            db.collection(userID)
+              .orderBy("key", "asc")
+              .get()
+              .then((querySnapshot) => {
+                if (querySnapshot.size != 0) {
+                  querySnapshot.forEach((documentSnapshot) =>
+                    array.push(documentSnapshot.data())
+                  );
+                }
+              })
+              .then(async () => {
+                console.log("Data", array);
+                dispatch(addProductData(array));
+                const state = Store.getState().Reducer;
+                await AsyncStorage.setItem(
+                  "AppSKHATA786",
+                  JSON.stringify(state)
+                );
+              })
+              .catch(console.log);
+          } else {
+            dispatch(signOut());
+          }
+        });
+      }
+    });
   };
 };

@@ -27,7 +27,17 @@ import {
   setTestDeviceIDAsync,
 } from "expo-ads-admob";
 import { useDispatch, useSelector } from "react-redux";
-import { remove, setKey } from "../redux/Actions";
+import * as Network from "expo-network";
+import {
+  addKhataAccount,
+  addProductData,
+  loadData,
+  remove,
+  setKey,
+  signOut,
+} from "../redux/Actions";
+import { auth, db } from "../../firebase";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DATA = [
   {
@@ -75,8 +85,8 @@ function UserData({ navigation }) {
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const interstitialID =
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
-  const state = useSelector((state) => state);
-  const data = state.Reducer.data;
+  const state = useSelector((state) => state.Reducer);
+  const data = state.data;
   const dispatch = useDispatch();
 
   const instential = async () => {
@@ -87,17 +97,12 @@ function UserData({ navigation }) {
     if (await AdMobInterstitial.getIsReadyAsync().valueOf())
       await AdMobInterstitial.showAdAsync();
   };
+  const [count, setCount] = useState(0);
 
   // console.log(state);
 
   useEffect(() => {
     instential();
-    // const unsubscribe = fetch("https://reqres.in/api/users?page=2")
-    //   .then((response) => response.json())
-    //   .then((json) => setData(json.data))
-    //   .catch((err) => console.error(err))
-    //   .finally(() => setLoading(false));
-    // return unsubscribe;
   }, []);
 
   return (
@@ -141,6 +146,11 @@ function UserData({ navigation }) {
         ItemSeparatorComponent={() => (
           <View style={{ backgroundColor: "white", padding: 10 }} />
         )}
+        refreshing={isLoading}
+        onRefresh={() => {
+          dispatch(loadData());
+          setLoading(false);
+        }}
       />
       <View style={{ alignSelf: "center" }}>
         <AdMobBanner
