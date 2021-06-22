@@ -4,6 +4,7 @@ import {
   db,
   fbAuthProvider,
   firdb,
+  firestoreForOtherApp,
   googleAuthProvider,
   storage,
 } from "../../firebase";
@@ -33,7 +34,10 @@ import * as SecureStore from "expo-secure-store";
 import * as Facebook from "expo-facebook";
 import * as Google from "expo-google-app-auth";
 import * as ImagePicker from "expo-image-picker";
+import * as firebase from "firebase";
+import "firebase/firestore";
 
+firebase.default.firestore;
 import {
   androidClientIdGoogle,
   appIdFb,
@@ -177,6 +181,7 @@ export const removeProfilePic = () => {
     type: PHOTOURIREMOVE,
   };
 };
+
 export const setKhataImage = (uri) => {
   return {
     type: KHATAURI,
@@ -209,7 +214,57 @@ export const loginOffline = () => {
     const result = JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
     if (result || result != null) {
       const state = result;
-      // console.log("Result from login offlie" + result);
+
+      // let array = [];
+      // check().then((isConnected) => {
+      //   console.log("Is Connected Status", isConnected);
+      //   if (isConnected) {
+      //     auth.onAuthStateChanged((user) => {
+      //       if (user) {
+      //         const userID = user.uid;
+      //         db.collection(userID)
+      //           .orderBy("key", "asc")
+      //           .get()
+      //           .then((querySnapshot) => {
+      //             if (querySnapshot.size != 0) {
+      //               querySnapshot.forEach((documentSnapshot) =>
+      //                 array.push(documentSnapshot.data())
+      //               );
+      //             }
+      //           })
+      //           .then(() =>
+      //             dispatch(
+      //               loginSuccessFull(
+      //                 state.userID,
+      //                 state.photoUrl,
+      //                 state.displayName,
+      //                 state.count,
+      //                 state.offlineNote,
+      //                 array,
+      //                 state.email,
+      //                 state.password
+      //               )
+      //             )
+      //           );
+      //       } else {
+      //         dispatch(signOut());
+      //       }
+      //     });
+      //   } else {
+      //     dispatch(
+      //       loginSuccessFull(
+      //         state.userID,
+      //         state.photoUrl,
+      //         state.displayName,
+      //         state.count,
+      //         state.offlineNote,
+      //         state.data,
+      //         state.email,
+      //         state.password
+      //       )
+      //     );
+      //   }
+      // });
       dispatch(
         loginSuccessFull(
           state.userID,
@@ -256,9 +311,7 @@ export const loginWithFacebook = () => {
               email: "FB",
               password: null,
             };
-
             await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
-
             dispatch(
               loginSuccessFull(
                 state.userID,
@@ -269,7 +322,6 @@ export const loginWithFacebook = () => {
                 state.data
               )
             );
-            dispatch(loadData());
           })
           .catch((error) => {
             alert(error);
@@ -324,7 +376,6 @@ export const loginWithGoogle = () => {
                 state.data
               )
             );
-            dispatch(loadData());
           })
           .catch((error) => {
             alert(error);
@@ -348,7 +399,7 @@ export const signOut = () => {
         dispatch(logOut());
       })
       .catch((error) => {
-        // An error happened.
+        console.log(error);
       });
   };
 };
@@ -384,6 +435,7 @@ export const loginWithEmail = (email, password) => {
               state.password
             )
           );
+          // firebase.firestore().clearPersistence().catch(console.log);
           dispatch(loadData());
         } else {
           Alert.alert(
@@ -647,7 +699,6 @@ export const addProduct = (productName, price, description = "", uri) => {
     dispatch(addProductData(profile));
     uploadProductImage(uri, id).then((uri) => {
       dispatch(setKhataImage(uri));
-      // console.log(userId + " " + key);
       let documentID;
       db.collection(userId)
         .where("key", "==", key)
@@ -729,19 +780,26 @@ export const setStatus = (productKey) => {
     dispatch(addProductData(profile));
     console.log(userId + " " + key);
     let documentID;
+    let docData = [];
     db.collection(userId)
       .where("key", "==", key)
       .get()
       .then((querySnapshot) => {
         // console.log(querySnapshot.size);
-        querySnapshot.forEach(
-          (documentSnapshot) => (documentID = documentSnapshot.id)
-        );
+        querySnapshot.forEach((documentSnapshot) => {
+          documentID = documentSnapshot.id;
+          docData = documentSnapshot.data().data;
+        });
         console.log(documentID);
+        docData.map((p) => (p.key == productKey ? (p.status = true) : p));
+        // docData.map((productData) => {
+        //   productData.key == productKey? productData = {...productData, status=true} : productData
+        // })
+        console.log("Data", docData);
       })
       .then(() => {
         db.collection(userId).doc(documentID).update({
-          data: productData,
+          data: docData,
         });
       })
       .then(() => alert("Product added"))
@@ -834,14 +892,10 @@ export const loadData = () => {
                   );
                 }
               })
-              .then(async () => {
-                console.log("Data", array);
+              .then(() => {
+                // console.log("Data", array);
                 dispatch(addProductData(array));
-                const state = Store.getState().Reducer;
-                await AsyncStorage.setItem(
-                  "AppSKHATA786",
-                  JSON.stringify(state)
-                );
+                // const state = Store.getState().Reducer;
               })
               .catch(console.log);
           } else {

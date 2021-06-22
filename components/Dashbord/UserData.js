@@ -88,6 +88,8 @@ function UserData({ navigation }) {
   const state = useSelector((state) => state.Reducer);
   const data = state.data;
   const dispatch = useDispatch();
+  const [count, setCount] = useState(0);
+  const [resfreshing, setRefreshing] = useState(false);
 
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
@@ -97,13 +99,33 @@ function UserData({ navigation }) {
     if (await AdMobInterstitial.getIsReadyAsync().valueOf())
       await AdMobInterstitial.showAdAsync();
   };
-  const [count, setCount] = useState(0);
 
   // console.log(state);
 
+  const storeData = async () => {
+    await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
+  };
+
+  const getData = async () => {
+    console.log(JSON.parse(await AsyncStorage.getItem("AppSKHATA786")));
+  };
+
+  const run = () => {
+    dispatch(loadData());
+  };
+
   useEffect(() => {
-    instential();
-  }, []);
+    if (!count) {
+      instential();
+    }
+    try {
+      run();
+      storeData();
+      getData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [count]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -146,10 +168,10 @@ function UserData({ navigation }) {
         ItemSeparatorComponent={() => (
           <View style={{ backgroundColor: "white", padding: 10 }} />
         )}
-        refreshing={isLoading}
+        refreshing={resfreshing}
         onRefresh={() => {
-          dispatch(loadData());
-          setLoading(false);
+          setRefreshing(false);
+          setCount(count + 1);
         }}
       />
       <View style={{ alignSelf: "center" }}>

@@ -64,7 +64,10 @@ function ThingsBought({ navigation, route }) {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.Reducer);
   const key = state.key;
-  const data = state.data.filter((m) => m.key == key)[0].data;
+  let data;
+  if (state) {
+    data = state.data.filter((m) => m.key == key)[0].data;
+  }
   // console.log(data1);
 
   useEffect(() => {

@@ -85,6 +85,7 @@ const initialState = {
 };
 
 export default Reducer = (state = initialState, action) => {
+  // console.log(state);
   switch (action.type) {
     case SUCCESSFULL:
       return {

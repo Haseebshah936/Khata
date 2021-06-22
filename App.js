@@ -8,7 +8,11 @@ import { Provider } from "react-redux";
 import Store from "./components/redux/Store";
 
 export default function App() {
-  LogBox.ignoreLogs(["Setting a timer"]);
+  LogBox.ignoreLogs([
+    "Setting a timer",
+    "Deprecated: Native Google Sign-In has been moved to Expo.GoogleSignIn",
+    "Can't perform a React state",
+  ]);
   return (
     <Provider store={Store}>
       <NavigationContainer>
