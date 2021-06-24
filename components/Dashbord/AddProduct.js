@@ -72,14 +72,14 @@ function AddProduct({ navigation }) {
   // };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.container}>
-      <View style={styles.loginTextTopContainer}>
+    <Pressable onPress={Keyboard.dismiss} style={[styles.container, {justifyContent: 'space-between'}]}>
+      {/* <View style={styles.loginTextTopContainer}>
         <Text style={styles.loginText}>Add Product</Text>
         <View style={[styles.circleContainer, { left: 30 }]}>
           <View style={styles.loginTextTopContainerSmallCircle} />
           <View style={styles.loginTextTopContainerBigCircle} />
         </View>
-      </View>
+      </View> */}
       <View>
         <Formik
           initialValues={{ name: "", price: "", description: "" }}
@@ -98,7 +98,7 @@ function AddProduct({ navigation }) {
             touched,
           }) => (
             <>
-              <View style={styles.loginContainer}>
+              <View style={[styles.loginContainer, {marginTop: '30%'}]}>
                 <View style={styles.profileContainer}>
                   <TouchableOpacity
                     style={styles.profilePic}

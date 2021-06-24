@@ -122,9 +122,11 @@ function ThingsBought({ navigation, route }) {
           <View style={{ backgroundColor: "white", padding: 10 }} />
         )}
       />
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton}  
+        onPress={() => navigation.navigate("AddProduct")}
+        activeOpacity={0.6}
+      >
         <AntDesign
-          onPress={() => navigation.navigate("AddProduct")}
           name="plus"
           size={30}
           color="orange"
