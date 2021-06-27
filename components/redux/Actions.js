@@ -29,6 +29,7 @@ import {
   ADDDATA,
   ADDPRODUCT,
   KEY,
+  ISLOADING,
 } from "./ActionTypes";
 import * as SecureStore from "expo-secure-store";
 import * as Facebook from "expo-facebook";
@@ -36,8 +37,6 @@ import * as Google from "expo-google-app-auth";
 import * as ImagePicker from "expo-image-picker";
 import * as firebase from "firebase";
 import "firebase/firestore";
-
-firebase.default.firestore;
 import {
   androidClientIdGoogle,
   appIdFb,
@@ -46,6 +45,7 @@ import {
 import { useSelector } from "react-redux";
 import { add } from "react-native-reanimated";
 import Store from "./Store";
+import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Network from "expo-network";
 import { Alert } from "react-native";
@@ -209,62 +209,18 @@ export const addProductData = (data) => {
   };
 };
 
+export const setIsLoading = (state) => {
+  return {
+    type: ISLOADING,
+    payload: state,
+  };
+};
+
 export const loginOffline = () => {
   return async (dispatch) => {
     const result = JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
     if (result || result != null) {
       const state = result;
-
-      // let array = [];
-      // check().then((isConnected) => {
-      //   console.log("Is Connected Status", isConnected);
-      //   if (isConnected) {
-      //     auth.onAuthStateChanged((user) => {
-      //       if (user) {
-      //         const userID = user.uid;
-      //         db.collection(userID)
-      //           .orderBy("key", "asc")
-      //           .get()
-      //           .then((querySnapshot) => {
-      //             if (querySnapshot.size != 0) {
-      //               querySnapshot.forEach((documentSnapshot) =>
-      //                 array.push(documentSnapshot.data())
-      //               );
-      //             }
-      //           })
-      //           .then(() =>
-      //             dispatch(
-      //               loginSuccessFull(
-      //                 state.userID,
-      //                 state.photoUrl,
-      //                 state.displayName,
-      //                 state.count,
-      //                 state.offlineNote,
-      //                 array,
-      //                 state.email,
-      //                 state.password
-      //               )
-      //             )
-      //           );
-      //       } else {
-      //         dispatch(signOut());
-      //       }
-      //     });
-      //   } else {
-      //     dispatch(
-      //       loginSuccessFull(
-      //         state.userID,
-      //         state.photoUrl,
-      //         state.displayName,
-      //         state.count,
-      //         state.offlineNote,
-      //         state.data,
-      //         state.email,
-      //         state.password
-      //       )
-      //     );
-      //   }
-      // });
       dispatch(
         loginSuccessFull(
           state.userID,
@@ -277,6 +233,7 @@ export const loginOffline = () => {
           state.password
         )
       );
+      dispatch(loadData());
     } else {
       dispatch(loginFailure());
     }
@@ -869,16 +826,18 @@ export const remove = (key) => {
 };
 
 const check = async () => {
-  let { isConnected } = await Network.getNetworkStateAsync();
-  return isConnected;
+  let status = NetInfo.fetch().then((status) => status);
+  // let { isConnected } = await Network.getNetworkStateAsync();
+  return status;
 };
 
 export const loadData = () => {
   return async (dispatch) => {
     let array = [];
-    check().then((isConnected) => {
-      console.log("Is Connected Status", isConnected);
-      if (isConnected) {
+    check().then((status) => {
+      alert(status.isInternetReachable + " ");
+      if (status.isInternetReachable) {
+        alert("Entered");
         auth.onAuthStateChanged((user) => {
           if (user) {
             const userID = user.uid;
@@ -892,17 +851,40 @@ export const loadData = () => {
                   );
                 }
               })
-              .then(() => {
+              .then(async () => {
                 // console.log("Data", array);
                 dispatch(addProductData(array));
                 // const state = Store.getState().Reducer;
+                dispatch(setIsLoading(false));
+                const state = Store.getState().Reducer;
+                try {
+                  await AsyncStorage.setItem(
+                    "AppSKHATA786",
+                    JSON.stringify(state)
+                  );
+                } catch (error) {
+                  console.log(error);
+                }
               })
               .catch(console.log);
           } else {
             dispatch(signOut());
           }
         });
+      } else {
+        getDataAsync()
+          .then((result) => {
+            alert("Data" + result.data);
+            dispatch(addProductData(result.data));
+            setIsLoading(false);
+            // const state = Store.getState().Reducer;
+          })
+          .catch(console.log);
       }
     });
   };
+};
+
+const getDataAsync = async () => {
+  return JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
 };

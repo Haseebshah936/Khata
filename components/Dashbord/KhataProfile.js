@@ -7,31 +7,35 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Text,
+  Linking,
+  TouchableOpacity,
 } from "react-native";
 import styles from "../Style/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { android, ios } from "../../APIKeys";
-import {
-  AdMobBanner,
-  AdMobInterstitial,
-  PublisherBanner,
-  AdMobRewarded,
-  setTestDeviceIDAsync,
-} from "expo-ads-admob";
+import { AdMobBanner } from "expo-ads-admob";
 import { FontAwesome } from "@expo/vector-icons";
 
-function ViewProduct({ route }) {
+function KhataProfile({ route }) {
   const data = route.params;
   const uri = data.uri;
-  const price = data.price;
-  const description = data.description;
-  const name = data.productName;
-  const status = data.status;
+  const phoneNo = data.phoneNo;
+  const address = data.address;
+  const name = data.userName;
   const hold =
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
-  console.log(data);
+  // console.log(data);
   const bannerID =
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
+  const dialCall = (number) => {
+    let phoneNumber = "";
+    if (Platform.OS === "android") {
+      phoneNumber = `tel:${number}`;
+    } else {
+      phoneNumber = `telprompt:${number}`;
+    }
+    Linking.openURL(phoneNumber);
+  };
   return (
     <SafeAreaView
       style={[styles.container, { justifyContent: "space-between" }]}
@@ -45,8 +49,8 @@ function ViewProduct({ route }) {
           >
             {uri ? (
               <Image
-                resizeMethod={"resize"}
                 style={{ overflow: "hidden", borderRadius: 20 }}
+                resizeMethod={"resize"}
                 source={{
                   width: 120,
                   height: 120,
@@ -69,7 +73,7 @@ function ViewProduct({ route }) {
             <View style={styles.productContainer}>
               <Ionicons
                 style={styles.icon}
-                name="cart-outline"
+                name="person-outline"
                 size={22}
                 color="black"
               />
@@ -77,53 +81,40 @@ function ViewProduct({ route }) {
             </View>
           </View>
         </View>
-        <View style={styles.loginInputContainer}>
-          <FontAwesome
-            name="money"
-            size={22}
-            color="black"
-            style={[styles.icon]}
-          />
-          <Text style={styles.loginInput}>{price}</Text>
-        </View>
-        <View style={[styles.loginInputContainer, { marginTop: 20 }]}>
+        <TouchableOpacity
+          onPress={() => dialCall(phoneNo)}
+          style={styles.loginInputContainer}
+          activeOpacity={0.6}
+        >
           <Ionicons
-            style={[styles.icon, { paddingBottom: 5 }]}
-            name="bookmark-outline"
+            style={styles.icon}
+            name="call-outline"
             size={22}
             color="black"
           />
-          {description === "" || description === null ? (
-            <Text
-              style={[styles.loginInput, { paddingLeft: 5, paddingBottom: 5 }]}
-            >
-              Description not Provided
-            </Text>
-          ) : (
-            <Text style={[styles.loginInput, { paddingLeft: 5 }]}>
-              {description}
-            </Text>
-          )}
-        </View>
+          <Text style={styles.loginInput}>{phoneNo}</Text>
+        </TouchableOpacity>
         <View
           style={[
             styles.loginInputContainer,
             { marginTop: 20, marginBottom: 15 },
           ]}
         >
-          <FontAwesome
-            name="money"
+          <Ionicons
+            style={[styles.icon, { paddingBottom: 5 }]}
+            name="bookmark-outline"
             size={22}
             color="black"
-            style={[styles.icon]}
           />
-          {status ? (
-            <Text style={[styles.loginInput, { paddingLeft: 5 }]}>Paid</Text>
+          {address === "" || address === null ? (
+            <Text style={[styles.loginInput, { paddingLeft: 5 }]}>
+              Address Not Provided
+            </Text>
           ) : (
             <Text
               style={[styles.loginInput, { paddingBottom: 5, paddingLeft: 5 }]}
             >
-              Not-Paid
+              {address}
             </Text>
           )}
         </View>
@@ -145,4 +136,4 @@ function ViewProduct({ route }) {
 //   constainer
 // })
 
-export default ViewProduct;
+export default KhataProfile;

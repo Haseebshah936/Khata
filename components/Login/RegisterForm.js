@@ -129,6 +129,7 @@ function RegisterForm({ navigation }) {
                       {uri ? (
                         <Image
                           resizeMethod={"resize"}
+                          style={{ overflow: "hidden", borderRadius: 20 }}
                           source={{
                             width: 120,
                             height: 120,
@@ -138,6 +139,7 @@ function RegisterForm({ navigation }) {
                       ) : (
                         <Image
                           resizeMethod={"resize"}
+                          style={{ overflow: "hidden", borderRadius: 20 }}
                           source={{
                             width: 120,
                             height: 120,
@@ -195,7 +197,7 @@ function RegisterForm({ navigation }) {
                   <View style={styles.loginInputContainer}>
                     <Ionicons
                       style={styles.icon}
-                      name="person-outline"
+                      name="card-outline"
                       size={22}
                       color="black"
                     />

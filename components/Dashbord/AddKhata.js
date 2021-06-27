@@ -103,6 +103,7 @@ function AddKhata({ navigation }) {
                     {uri ? (
                       <Image
                         resizeMethod={"resize"}
+                        style={{ overflow: "hidden", borderRadius: 20 }}
                         source={{
                           width: 120,
                           height: 120,
@@ -112,6 +113,7 @@ function AddKhata({ navigation }) {
                     ) : (
                       <Image
                         resizeMethod={"resize"}
+                        style={{ overflow: "hidden", borderRadius: 20 }}
                         source={{
                           width: 120,
                           height: 120,

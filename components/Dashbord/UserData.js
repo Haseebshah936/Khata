@@ -38,6 +38,7 @@ import {
 } from "../redux/Actions";
 import { auth, db } from "../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import color from "../Style/color";
 
 const DATA = [
   {
@@ -80,100 +81,94 @@ const DATA = [
 
 function UserData({ navigation }) {
   // const [data, setData] = useState();
-  const [isLoading, setLoading] = useState(false);
+  // const [isLoading, setLoading] = useState(true);
   const bannerID =
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const interstitialID =
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
   const state = useSelector((state) => state.Reducer);
+  const isLoading = state.isLoading;
   const data = state.data;
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const [resfreshing, setRefreshing] = useState(false);
 
   const instential = async () => {
-    await AdMobInterstitial.setAdUnitID(interstitialID);
-    await AdMobInterstitial.requestAdAsync({
-      servePersonalizedAds: true,
-    }).catch(console.log);
-    if (await AdMobInterstitial.getIsReadyAsync().valueOf())
-      await AdMobInterstitial.showAdAsync();
-  };
-
-  // console.log(state);
-
-  const storeData = async () => {
-    await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
-  };
-
-  const getData = async () => {
-    console.log(JSON.parse(await AsyncStorage.getItem("AppSKHATA786")));
-  };
-
-  const run = () => {
-    dispatch(loadData());
-  };
-
-  useEffect(() => {
-    if (!count) {
-      instential();
-    }
     try {
-      run();
-      storeData();
-      getData();
+      await AdMobInterstitial.setAdUnitID(interstitialID);
+      await AdMobInterstitial.requestAdAsync({
+        servePersonalizedAds: true,
+      }).catch(console.log);
+      if (await AdMobInterstitial.getIsReadyAsync().valueOf())
+        await AdMobInterstitial.showAdAsync();
     } catch (error) {
       console.log(error);
     }
-  }, [count]);
+  };
+
+  const run = async () => {
+    try {
+      await dispatch(loadData());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    instential();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       {/* <Button title={"Open"} onPress={()=> navigation.openDrawer()} /> */}
-      {isLoading && <ActivityIndicator size={"large"} color={"black"} />}
-      <FlatList
-        data={data}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Client
-            avatar={item.uri}
-            name={item.userName}
-            phoneNo={item.phoneNo}
-            amountToPay={item.address}
-            onPress={() => {
-              dispatch(setKey(item.key));
-              navigation.navigate("ThingsBought", item);
-            }}
-            renderRightActions={() => (
-              <RenderRightAction
-                onPress={() =>
-                  Alert.alert(
-                    "Confirmation",
-                    "Are you sure want to remove the Khata?",
-                    [
-                      {
-                        text: "No",
-                      },
-                      {
-                        text: "Yes",
-                        onPress: () => dispatch(remove(item.key)),
-                      },
-                    ]
-                  )
-                }
-              />
-            )}
-          />
-        )}
-        ItemSeparatorComponent={() => (
-          <View style={{ backgroundColor: "white", padding: 10 }} />
-        )}
-        refreshing={resfreshing}
-        onRefresh={() => {
-          setRefreshing(false);
-          setCount(count + 1);
-        }}
-      />
+      {isLoading ? (
+        <ActivityIndicator size={"large"} color={color.primary} />
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Client
+              avatar={item.uri}
+              name={item.userName}
+              phoneNo={item.phoneNo}
+              amountToPay={item.address}
+              onPress={() => {
+                navigation.navigate("ThingsBought", item.key);
+              }}
+              renderRightActions={() => (
+                <RenderRightAction
+                  onPress={() =>
+                    Alert.alert(
+                      "Confirmation",
+                      "Are you sure want to remove the Khata?",
+                      [
+                        {
+                          text: "No",
+                        },
+                        {
+                          text: "Yes",
+                          onPress: () => dispatch(remove(item.key)),
+                        },
+                      ]
+                    )
+                  }
+                />
+              )}
+            />
+          )}
+          ItemSeparatorComponent={() => (
+            <View style={{ backgroundColor: "white", padding: 10 }} />
+          )}
+          refreshing={resfreshing}
+          onRefresh={() => {
+            run().then(() => {
+              setRefreshing(false);
+              // setLoading(false);
+            });
+          }}
+        />
+      )}
       <View style={{ alignSelf: "center" }}>
         <AdMobBanner
           bannerSize="leaderboard"
@@ -191,7 +186,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     // alignItems: 'center',
-    // justifyContent: "center",
+    justifyContent: "space-between",
     paddingTop: Constants.statusBarHeight * 1.2,
   },
   addButton: {

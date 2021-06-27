@@ -33,6 +33,7 @@ function Account({ navigation }) {
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const dispatch = useDispatch();
   const [uri, setUri] = useState(store.Reducer.profilePic);
+  const [user, setUser] = useState({});
   // const signOut = () => {
   //   auth
   //     .signOut()
@@ -56,6 +57,7 @@ function Account({ navigation }) {
       auth.onAuthStateChanged((user) => {
         if (user) {
           setUri(user.photoURL);
+          setUser(user);
         }
       });
     } catch (error) {
@@ -80,6 +82,7 @@ function Account({ navigation }) {
           fontSize={12}
           fontColor={"white"}
           marginTop={0}
+          onPress={() => navigation.navigate("UserProfile", user)}
         />
       </View>
 

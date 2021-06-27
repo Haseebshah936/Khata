@@ -72,7 +72,10 @@ function AddProduct({ navigation }) {
   // };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={[styles.container, {justifyContent: 'space-between'}]}>
+    <Pressable
+      onPress={Keyboard.dismiss}
+      style={[styles.container, { justifyContent: "space-between" }]}
+    >
       {/* <View style={styles.loginTextTopContainer}>
         <Text style={styles.loginText}>Add Product</Text>
         <View style={[styles.circleContainer, { left: 30 }]}>
@@ -80,6 +83,7 @@ function AddProduct({ navigation }) {
           <View style={styles.loginTextTopContainerBigCircle} />
         </View>
       </View> */}
+      <View></View>
       <View>
         <Formik
           initialValues={{ name: "", price: "", description: "" }}
@@ -98,7 +102,7 @@ function AddProduct({ navigation }) {
             touched,
           }) => (
             <>
-              <View style={[styles.loginContainer, {marginTop: '30%'}]}>
+              <View style={[styles.loginContainer]}>
                 <View style={styles.profileContainer}>
                   <TouchableOpacity
                     style={styles.profilePic}
@@ -108,6 +112,7 @@ function AddProduct({ navigation }) {
                     {uri ? (
                       <Image
                         resizeMethod={"resize"}
+                        style={{ overflow: "hidden", borderRadius: 20 }}
                         source={{
                           width: 120,
                           height: 120,
@@ -117,6 +122,7 @@ function AddProduct({ navigation }) {
                     ) : (
                       <Image
                         resizeMethod={"resize"}
+                        style={{ overflow: "hidden", borderRadius: 20 }}
                         source={{
                           width: 120,
                           height: 120,

@@ -21,7 +21,7 @@ function ProductBought({
 }) {
   // let amountToPay1 = 10000;
   return (
-    <Swipeable renderRightActions={renderRightActions}>
+    <Swipeable renderRightActions={renderRightActions} friction={2}>
       <TouchableOpacity
         activeOpacity={0.6}
         style={styles.data}

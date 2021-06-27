@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  TouchableHighlight,
-} from "react-native";
+import { Image, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
@@ -24,7 +18,7 @@ function Profile({
 }) {
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <TouchableHighlight
+      <TouchableOpacity
         onPress={onPress}
         underlayColor={"#ffffff"}
         activeOpacity={0.6}
@@ -64,7 +58,7 @@ function Profile({
             </View>
           </View>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     </Swipeable>
   );
 }
