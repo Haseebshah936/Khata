@@ -30,6 +30,7 @@ import {
   ADDPRODUCT,
   KEY,
   ISLOADING,
+  ROUTING,
 } from "./ActionTypes";
 import * as SecureStore from "expo-secure-store";
 import * as Facebook from "expo-facebook";
@@ -216,6 +217,13 @@ export const setIsLoading = (state) => {
   };
 };
 
+export const setRouting = (routing) => {
+  return {
+    type: ROUTING,
+    payload: routing,
+  };
+};
+
 export const loginOffline = () => {
   return async (dispatch) => {
     const result = JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
@@ -363,6 +371,7 @@ export const signOut = () => {
 
 export const loginWithEmail = (email, password) => {
   return async (dispatch) => {
+    let count = 0;
     // dispatch(loginRequest());
     auth
       .signInWithEmailAndPassword(email, password)
@@ -402,10 +411,16 @@ export const loginWithEmail = (email, password) => {
               {
                 text: "Re-Send",
                 onPress: () => {
-                  user.sendEmailVerification() /
-                    then(() => {
+                  if (count === 0)
+                    user.sendEmailVerification().then(() => {
                       console.log("Sent");
                     });
+                  else {
+                    Alert.alert("Re-Send Available", "After 60 seconds!");
+                    setTimeout(() => {
+                      count--;
+                    }, 60000);
+                  }
                 },
               },
               {
@@ -437,7 +452,7 @@ export const addImage = () => {
     // console.log("Add Image");
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.2,
+      quality: 0.1,
     });
     if (!result.cancelled) {
       // console.log(result.uri);
@@ -540,7 +555,7 @@ export const addKhataImage = () => {
   return async (dispatch) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.2,
+      quality: 0.1,
     });
     if (!result.cancelled) {
       dispatch(setKhataImage(result.uri));
@@ -599,17 +614,19 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
       uri: uri,
       data: [],
     };
-    dispatch(addKhataAccount(khataProfileData));
     uploadKhataImage(uri, id)
       .then((uri) => {
-        dispatch(setKhataImage(uri));
         db.collection(userId)
           .add({ ...khataProfileData, uri })
           .then(() => {
-            alert("User added!");
+            // alert("User added!");
           });
+        dispatch(setRouting(true));
+        dispatch(counterIncrease());
+        dispatch(setIsLoading(false));
       })
       .then(() => dispatch(removeKhataImage()));
+    dispatch(addKhataAccount(khataProfileData));
     await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
@@ -665,7 +682,6 @@ export const addProduct = (productName, price, description = "", uri) => {
           querySnapshot.forEach(
             (documentSnapshot) => (documentID = documentSnapshot.id)
           );
-          // console.log(documentID);
         })
         .then(() => {
           db.collection(userId)
@@ -677,9 +693,11 @@ export const addProduct = (productName, price, description = "", uri) => {
               }),
             });
         })
-        .then(() => alert("Product added"))
         .catch(console.log)
         .then(() => dispatch(removeKhataImage()));
+      dispatch(setRouting(true));
+      dispatch(counterIncrease());
+      dispatch(setIsLoading(false));
     });
 
     // dispatch(removeKhataImage());
@@ -825,7 +843,7 @@ export const remove = (key) => {
   };
 };
 
-const check = async () => {
+export const check = async () => {
   let status = NetInfo.fetch().then((status) => status);
   // let { isConnected } = await Network.getNetworkStateAsync();
   return status;
@@ -833,11 +851,10 @@ const check = async () => {
 
 export const loadData = () => {
   return async (dispatch) => {
+    alert("Entered");
     let array = [];
     check().then((status) => {
-      alert(status.isInternetReachable + " ");
       if (status.isInternetReachable) {
-        alert("Entered");
         auth.onAuthStateChanged((user) => {
           if (user) {
             const userID = user.uid;
@@ -857,14 +874,29 @@ export const loadData = () => {
                 // const state = Store.getState().Reducer;
                 dispatch(setIsLoading(false));
                 const state = Store.getState().Reducer;
-                try {
-                  await AsyncStorage.setItem(
-                    "AppSKHATA786",
-                    JSON.stringify(state)
-                  );
-                } catch (error) {
-                  console.log(error);
-                }
+                check().then(async (status) => {
+                  if (status.isInternetReachable) {
+                    alert("Saved");
+                    try {
+                      await AsyncStorage.setItem(
+                        "AppSKHATA786",
+                        JSON.stringify(state)
+                      );
+                    } catch (error) {
+                      console.log(error);
+                    }
+                  } else {
+                    alert("Loaded");
+                    getDataAsync()
+                      .then((result) => {
+                        // alert("Data" + result.data);
+                        dispatch(addProductData(result.data));
+                        setIsLoading(false);
+                        // const state = Store.getState().Reducer;
+                      })
+                      .catch(console.log);
+                  }
+                });
               })
               .catch(console.log);
           } else {
@@ -874,7 +906,7 @@ export const loadData = () => {
       } else {
         getDataAsync()
           .then((result) => {
-            alert("Data" + result.data);
+            // alert("Data" + result.data);
             dispatch(addProductData(result.data));
             setIsLoading(false);
             // const state = Store.getState().Reducer;

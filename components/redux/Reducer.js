@@ -17,6 +17,8 @@ import {
   ADDDATA,
   KEY,
   ADDPRODUCT,
+  ISLOADING,
+  ROUTING,
 } from "./ActionTypes";
 
 const initialState = {
@@ -29,9 +31,11 @@ const initialState = {
   key: 0,
   enableScroll: true,
   offline: false,
+  isLoading: false,
   email: null,
   password: null,
   khataImage: null,
+  routing: false,
   offlineNote: [
     {
       key: 0,
@@ -177,6 +181,16 @@ export default Reducer = (state = initialState, action) => {
       return {
         ...state,
         key: action.payload,
+      };
+    case ISLOADING:
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
+    case ROUTING:
+      return {
+        ...state,
+        routing: action.payload,
       };
     default:
       return state;

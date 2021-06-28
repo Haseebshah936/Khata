@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
 import Constants from "expo-constants";
 import Client from "./Client";
 import { useNavigation } from "@react-navigation/native";
@@ -31,6 +32,7 @@ import * as Network from "expo-network";
 import {
   addKhataAccount,
   addProductData,
+  check,
   loadData,
   remove,
   setKey,
@@ -39,6 +41,7 @@ import {
 import { auth, db } from "../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import color from "../Style/color";
+import Check from "../Login/Check";
 
 const DATA = [
   {
@@ -81,13 +84,13 @@ const DATA = [
 
 function UserData({ navigation }) {
   // const [data, setData] = useState();
-  // const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const bannerID =
     Platform.OS === "ios" ? ios.admobBanner : android.admobBanner;
   const interstitialID =
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
   const state = useSelector((state) => state.Reducer);
-  const isLoading = state.isLoading;
+  // const isLoading = state.isLoading;
   const data = state.data;
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -148,7 +151,28 @@ function UserData({ navigation }) {
                         },
                         {
                           text: "Yes",
-                          onPress: () => dispatch(remove(item.key)),
+                          onPress: () => {
+                            check().then((status) => {
+                              if (status.isInternetReachable) {
+                                dispatch(remove(item.key));
+                              } else {
+                                Alert.alert(
+                                  "Internet not Connected",
+                                  "You are not connected to the internet. You can only view data and add data in offline notes. Which you can add later once you are connected.",
+                                  [
+                                    {
+                                      text: "OK",
+                                    },
+                                    {
+                                      text: "Go to offline notes",
+                                      onPress: () =>
+                                        navigation.navigate("Account"),
+                                    },
+                                  ]
+                                );
+                              }
+                            });
+                          },
                         },
                       ]
                     )

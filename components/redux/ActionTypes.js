@@ -19,3 +19,4 @@ export const SETOFFLINENOTE = "SETOFFLINENOTE";
 export const CHECKVERIFICATION = "CHECKVERIFICATION";
 export const KEY = "KEY";
 export const ISLOADING = "ISLOADING";
+export const ROUTING = "ROUTING";
