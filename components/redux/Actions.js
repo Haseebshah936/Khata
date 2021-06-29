@@ -211,6 +211,7 @@ export const addProductData = (data) => {
 };
 
 export const setIsLoading = (state) => {
+  console.log("Dosri bar ma chudai expo na");
   return {
     type: ISLOADING,
     payload: state,
@@ -411,11 +412,12 @@ export const loginWithEmail = (email, password) => {
               {
                 text: "Re-Send",
                 onPress: () => {
-                  if (count === 0)
+                  if (count === 0) {
+                    count++;
                     user.sendEmailVerification().then(() => {
                       console.log("Sent");
                     });
-                  else {
+                  } else {
                     Alert.alert("Re-Send Available", "After 60 seconds!");
                     setTimeout(() => {
                       count--;
@@ -621,12 +623,12 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
           .then(() => {
             // alert("User added!");
           });
-        dispatch(setRouting(true));
-        dispatch(counterIncrease());
-        dispatch(setIsLoading(false));
       })
       .then(() => dispatch(removeKhataImage()));
     dispatch(addKhataAccount(khataProfileData));
+    dispatch(setRouting(true));
+    dispatch(counterIncrease());
+    dispatch(setIsLoading(false));
     await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
@@ -851,7 +853,7 @@ export const check = async () => {
 
 export const loadData = () => {
   return async (dispatch) => {
-    alert("Entered");
+    // alert("Entered");
     let array = [];
     check().then((status) => {
       if (status.isInternetReachable) {
@@ -876,7 +878,7 @@ export const loadData = () => {
                 const state = Store.getState().Reducer;
                 check().then(async (status) => {
                   if (status.isInternetReachable) {
-                    alert("Saved");
+                    // alert("Saved");
                     try {
                       await AsyncStorage.setItem(
                         "AppSKHATA786",
@@ -886,7 +888,7 @@ export const loadData = () => {
                       console.log(error);
                     }
                   } else {
-                    alert("Loaded");
+                    // alert("Loaded");
                     getDataAsync()
                       .then((result) => {
                         // alert("Data" + result.data);

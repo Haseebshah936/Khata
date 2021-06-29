@@ -21,7 +21,7 @@ function Client({
 }) {
   let amountToPay1 = 10000;
   return (
-    <Swipeable renderRightActions={renderRightActions} friction={2}>
+    <Swipeable renderRightActions={renderRightActions} friction={1}>
       <TouchableOpacity
         activeOpacity={0.6}
         style={styles.data}

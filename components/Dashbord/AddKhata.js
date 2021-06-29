@@ -35,7 +35,6 @@ import {
   addKhataAccount,
   addKhataImage,
   addKhataProfile,
-  check,
   setIsLoading,
   setRouting,
 } from "../redux/Actions";
@@ -65,6 +64,18 @@ function AddKhata({ navigation }) {
   const hold =
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
   const dispatch = useDispatch();
+
+  const check = async () => {
+    dispatch(setIsLoading(true));
+    console.log("Pehli bar ma chudai Expo Na");
+    let status = NetInfo.fetch().then((status) => status);
+    if (!(await status).isInternetReachable) {
+      console.log("Is bar kun ma chudai Expo Na");
+      dispatch(setIsLoading(false));
+    }
+    // let { isConnected } = await Network.getNetworkStateAsync();
+    return status;
+  };
 
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
@@ -118,8 +129,8 @@ function AddKhata({ navigation }) {
             initialValues={{ name: "", phoneNo: "", address: "" }}
             onSubmit={(values) => {
               check().then((status) => {
+                console.log("Tesri bar ma chudai Expo Na");
                 if (status.isInternetReachable) {
-                  dispatch(setIsLoading(true));
                   dispatch(
                     addKhataProfile(
                       values.name,
