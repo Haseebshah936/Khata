@@ -175,7 +175,7 @@ export default Reducer = (state = initialState, action) => {
     case ADDPRODUCT:
       return {
         ...state,
-        data: [...action.payload],
+        data: action.payload,
       };
     case KEY:
       return {

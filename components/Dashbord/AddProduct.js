@@ -12,6 +12,7 @@ import {
   Keyboard,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../../firebase";
@@ -39,6 +40,7 @@ import {
 } from "../redux/Actions";
 import LottieView from "lottie-react-native";
 import { useDispatch, useSelector } from "react-redux";
+import color from "../Style/color";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Product Name"),
@@ -79,14 +81,56 @@ function AddProduct({ navigation }) {
   //     setUri(result.uri);
   //   }
   // };
-  let isLoading = store.Reducer.isLoading;
+  // let isLoading = store.Reducer.isLoading;
+  const [isLoading, setIsLoading] = useState(false);
   let count = store.Reducer.count;
   let routing = store.Reducer.routing;
+  const [productName, setProductName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDiscription] = useState("");
   const animation = useRef();
+  const submit = () => {
+    NetInfo.fetch().then((status) => {
+      if (status.isInternetReachable) {
+        // dispatch(setIsLoading(true));
+        dispatch(addProduct(productName, price, description, uri));
+      } else {
+        setIsLoading(false);
+        Alert.alert(
+          "Internet not Connected",
+          "You are not connected to the internet. You can view data and add data in offline notes. Which you can add later once you are connected.",
+          [
+            {
+              text: "OK",
+            },
+            {
+              text: "Go to offline notes",
+              onPress: () => navigation.navigate("Account"),
+            },
+          ]
+        );
+      }
+    });
+  };
+  const loader = async () => {
+    if (productName !== "" && price !== "") {
+      setIsLoading(true);
+      console.log("i am in+");
+    }
+  };
+  const [firstTime, setFirstTime] = useState(false);
   useEffect(() => {
     // animation.current.play();
+    // console.log("loaded");
+    if (!firstTime) {
+      console.log("i am in3");
+      setIsLoading(false);
+      setFirstTime(true);
+    }
     if (routing) {
       navigation.pop();
+      console.log("i am in2");
+      setIsLoading(false);
       dispatch(setRouting(false));
     }
   }, [count]);
@@ -105,29 +149,40 @@ function AddProduct({ navigation }) {
       </View> */}
       <View></View>
       {isLoading ? (
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <LottieView
-            ref={animation}
-            autoPlay
-            loop
-            style={{
-              width: 150,
-              height: 150,
-              backgroundColor: "#fff",
-            }}
-            source={require("../../assets/loader.json")}
-            // OR find more Lottie files @ https://lottiefiles.com/featured
-            // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
-          />
-        </View>
+        // <View style={{ justifyContent: "center", alignItems: "center" }}>
+        //   <LottieView
+        //     ref={animation}
+        //     autoPlay
+        //     loop
+        //     style={{
+        //       width: 150,
+        //       height: 150,
+        //       backgroundColor: "#fff",
+        //     }}
+        //     source={require("../../assets/loader.json")}
+        //     // OR find more Lottie files @ https://lottiefiles.com/featured
+        //     // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
+        //   />
+        // </View>
+        <ActivityIndicator
+          size={"large"}
+          color={color.primary}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        />
       ) : (
+        // <ActivityIndicator
+        //   size={"large"}
+        //   color={color.primary}
+        //   style={{ justifyContent: "center", alignSelf: "center" }}
+        // />
         <View>
-          <Formik
+          {/* <Formik
             initialValues={{ name: "", price: "", description: "" }}
             onSubmit={(values) => {
-              check().then((status) => {
-                if (status.isInternetReachable) {
-                  dispatch(setIsLoading(true));
+              {
+                setIsLoading(true);
+                if (true) {
+                  // dispatch(setIsLoading(true));
                   dispatch(
                     addProduct(
                       values.name,
@@ -151,7 +206,7 @@ function AddProduct({ navigation }) {
                     ]
                   );
                 }
-              });
+              }
             }}
             validationSchema={validationSchema}
           >
@@ -161,117 +216,118 @@ function AddProduct({ navigation }) {
               errors,
               setFieldTouched,
               touched,
-            }) => (
-              <>
-                <View style={[styles.loginContainer]}>
-                  <View style={styles.profileContainer}>
-                    <TouchableOpacity
-                      style={styles.profilePic}
-                      activeOpacity={0.6}
-                      onPress={() => dispatch(addKhataImage())}
-                    >
-                      {uri ? (
-                        <Image
-                          resizeMethod={"resize"}
-                          style={{ overflow: "hidden", borderRadius: 20 }}
-                          source={{
-                            width: 120,
-                            height: 120,
-                            uri: uri,
-                          }}
-                        />
-                      ) : (
-                        <Image
-                          resizeMethod={"resize"}
-                          style={{ overflow: "hidden", borderRadius: 20 }}
-                          source={{
-                            width: 120,
-                            height: 120,
-                            uri: hold,
-                          }}
-                        />
-                      )}
-                    </TouchableOpacity>
-                    <View style={{ flex: 0.9 }}>
-                      <View style={styles.productContainer}>
-                        <Ionicons
-                          style={styles.icon}
-                          name="cart-outline"
-                          size={22}
-                          color="black"
-                        />
-                        <TextInput
-                          onChangeText={handleChange("name")}
-                          style={styles.loginInput}
-                          placeholder={"Product Name"}
-                          clearButtonMode="always"
-                          keyboardType={"default"}
-                          onBlur={() => setFieldTouched("name")}
-                        />
-                      </View>
-                      <ErrorMessage
-                        error={errors.name}
-                        visible={touched.name}
-                        size={12}
-                      />
-                    </View>
-                  </View>
-                  <View style={styles.loginInputContainer}>
-                    <Ionicons
-                      style={styles.icon}
-                      name="card-outline"
-                      size={22}
-                      color="black"
-                    />
-                    <TextInput
-                      onChangeText={handleChange("price")}
-                      style={styles.loginInput}
-                      placeholder={"Price"}
-                      clearButtonMode="always"
-                      keyboardType={"numeric"}
-                      onBlur={() => setFieldTouched("price")}
-                    />
-                  </View>
-                  <ErrorMessage error={errors.price} visible={touched.price} />
-                  <View style={styles.loginInputContainer}>
-                    <Ionicons
-                      style={styles.icon}
-                      name="bookmark-outline"
-                      size={22}
-                      color="black"
-                    />
-                    <TextInput
-                      onChangeText={handleChange("description")}
-                      style={[
-                        styles.loginInput,
-                        { padding: 0, paddingLeft: 5 },
-                      ]}
-                      placeholder={"Description"}
-                      clearButtonMode="always"
-                      numberOfLines={3}
-                      multiline
-                      keyboardType={"default"}
-                      onBlur={() => setFieldTouched("description")}
-                    />
-                  </View>
-                  <ErrorMessage
-                    error={errors.description}
-                    visible={touched.description}
-                  />
-                </View>
+            }) => ( */}
+          <>
+            <View style={[styles.loginContainer]}>
+              <View style={styles.profileContainer}>
                 <TouchableOpacity
-                  // onPress={() => login()}
-                  onPress={() => {
-                    handleSubmit();
-                  }}
-                  style={styles.submitButton}
-                  activeOpacity={0.85}
+                  style={styles.profilePic}
+                  activeOpacity={0.6}
+                  onPress={() => dispatch(addKhataImage())}
                 >
-                  <Text style={styles.submitButtonText}>CREATE</Text>
+                  {uri ? (
+                    <Image
+                      resizeMethod={"resize"}
+                      style={{ overflow: "hidden", borderRadius: 20 }}
+                      source={{
+                        width: 120,
+                        height: 120,
+                        uri: uri,
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      resizeMethod={"resize"}
+                      style={{ overflow: "hidden", borderRadius: 20 }}
+                      source={{
+                        width: 120,
+                        height: 120,
+                        uri: hold,
+                      }}
+                    />
+                  )}
                 </TouchableOpacity>
-              </>
-            )}
-          </Formik>
+                <View style={{ flex: 0.9 }}>
+                  <View style={styles.productContainer}>
+                    <Ionicons
+                      style={styles.icon}
+                      name="cart-outline"
+                      size={22}
+                      color="black"
+                    />
+                    <TextInput
+                      // onChangeText={handleChange("name")}
+                      onChangeText={(text) => setProductName(text)}
+                      style={styles.loginInput}
+                      placeholder={"Product Name"}
+                      clearButtonMode="always"
+                      keyboardType={"default"}
+                      // onBlur={() => setFieldTouched("name")}
+                    />
+                  </View>
+                  {/* <ErrorMessage
+                    error={errors.name}
+                    visible={touched.name}
+                    size={12}
+                  /> */}
+                </View>
+              </View>
+              <View style={styles.loginInputContainer}>
+                <Ionicons
+                  style={styles.icon}
+                  name="card-outline"
+                  size={22}
+                  color="black"
+                />
+                <TextInput
+                  onChangeText={(text) => setPrice(text)}
+                  // onChangeText={handleChange("price")}
+                  style={styles.loginInput}
+                  placeholder={"Price"}
+                  clearButtonMode="always"
+                  keyboardType={"numeric"}
+                  // onBlur={() => setFieldTouched("price")}
+                />
+              </View>
+              {/* <ErrorMessage error={errors.price} visible={touched.price} /> */}
+              <View style={styles.loginInputContainer}>
+                <Ionicons
+                  style={styles.icon}
+                  name="bookmark-outline"
+                  size={22}
+                  color="black"
+                />
+                <TextInput
+                  // onChangeText={handleChange("description")}
+                  onChangeText={(text) => setDiscription(text)}
+                  style={[styles.loginInput, { padding: 0, paddingLeft: 5 }]}
+                  placeholder={"Description"}
+                  clearButtonMode="always"
+                  numberOfLines={3}
+                  multiline
+                  keyboardType={"default"}
+                  // onBlur={() => setFieldTouched("description")}
+                />
+              </View>
+              {/* <ErrorMessage
+                error={errors.description}
+                visible={touched.description}
+              /> */}
+            </View>
+            <TouchableOpacity
+              // onPress={() => login()}
+              onPress={() => {
+                // handleSubmit();
+                loader().then(() => submit());
+              }}
+              style={styles.submitButton}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.submitButtonText}>CREATE</Text>
+            </TouchableOpacity>
+          </>
+          {/* )} */}
+          {/* </Formik> */}
         </View>
       )}
       <View style={{ alignSelf: "center" }}>

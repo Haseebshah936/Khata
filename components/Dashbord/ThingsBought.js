@@ -103,10 +103,10 @@ function ThingsBought({ navigation, route }) {
             {uri === "" ? (
               <Image
                 style={{
-                  height: 40,
-                  width: 40,
-                  borderRadius: 50,
-                  marginLeft: 15,
+                  height: 45,
+                  width: 45,
+                  borderRadius: 45,
+                  marginLeft: 10,
                   marginRight: 10,
                 }}
                 source={require("../../assets/icon.png")}
@@ -114,13 +114,13 @@ function ThingsBought({ navigation, route }) {
             ) : (
               <Image
                 style={{
-                  borderRadius: 50,
-                  marginLeft: 15,
+                  borderRadius: 45,
+                  marginLeft: 10,
                   marginRight: 10,
                 }}
                 source={{
-                  height: 40,
-                  width: 40,
+                  height: 45,
+                  width: 45,
                   uri,
                 }}
               />
@@ -143,7 +143,7 @@ function ThingsBought({ navigation, route }) {
           anchor={
             <TouchableOpacity
               activeOpacity={0.6}
-              style={{ alignSelf: "center", padding: 0 }}
+              style={{ alignSelf: "center", paddingTop: 7 }}
               onPress={openMenu}
             >
               <Ionicons name="ellipsis-vertical" size={24} color="white" />
@@ -278,10 +278,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    paddingTop: Constants.statusBarHeight * 1.1,
+    paddingTop: Constants.statusBarHeight * 1,
     paddingLeft: 15,
     paddingRight: 20,
-    padding: 12,
+    paddingBottom: 8,
     backgroundColor: color.primary,
     justifyContent: "space-between",
     marginBottom: 15,

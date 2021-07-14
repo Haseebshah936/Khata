@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginForm from "../Login/LoginForm";
 import RegisterForm from "../Login/RegisterForm";
 // import index from '../TodoRealTime';
-import index from "../TodoFireStore";
+// import index from "../TodoFireStore";
 import UserData from "../Dashbord/UserData";
 import ThingsBought from "../Dashbord/ThingsBought";
 import ViewProduct from "../Dashbord/ViewProduct";

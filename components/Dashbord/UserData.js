@@ -118,7 +118,7 @@ function UserData({ navigation }) {
   };
 
   useEffect(() => {
-    instential();
+    // instential();
     dispatch(loadData());
   }, []);
 

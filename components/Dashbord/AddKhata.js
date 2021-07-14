@@ -35,6 +35,7 @@ import {
   addKhataAccount,
   addKhataImage,
   addKhataProfile,
+  check,
   setIsLoading,
   setRouting,
 } from "../redux/Actions";
@@ -64,18 +65,25 @@ function AddKhata({ navigation }) {
   const hold =
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
   const dispatch = useDispatch();
+  let isLoading = store.Reducer.isLoading;
+  let count = store.Reducer.count;
+  // const [isLoading, setIsLoading] = useState(false);
+  let routing = store.Reducer.routing;
+  const animation = useRef();
 
-  const check = async () => {
-    dispatch(setIsLoading(true));
-    console.log("Pehli bar ma chudai Expo Na");
-    let status = NetInfo.fetch().then((status) => status);
-    if (!(await status).isInternetReachable) {
-      console.log("Is bar kun ma chudai Expo Na");
-      dispatch(setIsLoading(false));
-    }
-    // let { isConnected } = await Network.getNetworkStateAsync();
-    return status;
-  };
+  // const check = async () => {
+  //   // dispatch(setIsLoading(true));
+  //   // console.log("Pehli bar ma chudai Expo Na");
+  //   setIsLoading(true);
+  // let status = NetInfo.fetch().then((status) => status);
+  // if (!(await status).isInternetReachable) {
+  //   // console.log("Is bar kun ma chudai Expo Na");
+  //   // dispatch(setIsLoading(false));
+  //   setIsLoading(false);
+  // }
+  //   // let { isConnected } = await Network.getNetworkStateAsync();
+  //   return status;
+  // };
 
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
@@ -85,15 +93,11 @@ function AddKhata({ navigation }) {
     if (await AdMobInterstitial.getIsReadyAsync().valueOf)
       await AdMobInterstitial.showAdAsync();
   };
-  let isLoading = store.Reducer.isLoading;
-  let count = store.Reducer.count;
-  // const [isLoading, setIsLoading] = useState(false);
-  let routing = store.Reducer.routing;
-  const animation = useRef();
   useEffect(() => {
     // animation.current.play();
     if (routing) {
       navigation.navigate("Main");
+      // setIsLoading(false);
       dispatch(setRouting(false));
     }
   }, [count]);
@@ -128,33 +132,38 @@ function AddKhata({ navigation }) {
           <Formik
             initialValues={{ name: "", phoneNo: "", address: "" }}
             onSubmit={(values) => {
-              check().then((status) => {
-                console.log("Tesri bar ma chudai Expo Na");
-                if (status.isInternetReachable) {
-                  dispatch(
-                    addKhataProfile(
-                      values.name,
-                      values.phoneNo,
-                      values.address,
-                      uri
-                    )
-                  );
-                } else {
-                  Alert.alert(
-                    "Internet not Connected",
-                    "You are not connected to the internet. You can view data and add data in offline notes. Which you can add later once you are connected.",
-                    [
-                      {
-                        text: "OK",
-                      },
-                      {
-                        text: "Go to offline notes",
-                        onPress: () => navigation.navigate("Account"),
-                      },
-                    ]
-                  );
-                }
-              });
+              setIsLoading(true);
+              {
+                // dispatch(setIsLoading(true));
+                // console.log("Tesri bar ma chudai Expo Na");
+                NetInfo.fetch().then((status) => {
+                  if (status.isInternetReachable) {
+                    dispatch(
+                      addKhataProfile(
+                        values.name,
+                        values.phoneNo,
+                        values.address,
+                        uri
+                      )
+                    );
+                  } else {
+                    dispatch(setIsLoading(false));
+                    Alert.alert(
+                      "Internet not Connected",
+                      "You are not connected to the internet. You can view data and add data in offline notes. Which you can add later once you are connected.",
+                      [
+                        {
+                          text: "OK",
+                        },
+                        {
+                          text: "Go to offline notes",
+                          onPress: () => navigation.navigate("Account"),
+                        },
+                      ]
+                    );
+                  }
+                });
+              }
             }}
             validationSchema={validationSchema}
           >

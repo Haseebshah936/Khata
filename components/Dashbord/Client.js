@@ -34,11 +34,11 @@ function Client({
         <View style={styles.textContainer}>
           <View style={styles.subTextContainer}>
             <Text style={styles.text}>{name} </Text>
-            <Text style={styles.toPay}>AmountToPay </Text>
+            {/* <Text style={styles.toPay}>AmountToPay </Text> */}
           </View>
           <View style={styles.subTextContainer}>
             <Text style={styles.text}>{phoneNo}</Text>
-            <Text style={styles.toPay}>{amountToPay1} /-Rs</Text>
+            {/* <Text style={styles.toPay}>{amountToPay1} /-Rs</Text> */}
           </View>
           {/* <Text style={styles.email}> {amountToPay}</Text> */}
         </View>

@@ -211,7 +211,7 @@ export const addProductData = (data) => {
 };
 
 export const setIsLoading = (state) => {
-  console.log("Dosri bar ma chudai expo na");
+  // console.log("Dosri bar ma chudai expo na");
   return {
     type: ISLOADING,
     payload: state,
@@ -628,16 +628,17 @@ export const addKhataProfile = (name, phoneNo, address, uri) => {
     dispatch(addKhataAccount(khataProfileData));
     dispatch(setRouting(true));
     dispatch(counterIncrease());
-    dispatch(setIsLoading(false));
     await AsyncStorage.setItem(
       "AppSKHATA786",
       JSON.stringify(Store.getState().Reducer)
     );
+    // dispatch(setIsLoading(false));
   };
 };
 
 export const addProduct = (productName, price, description = "", uri) => {
   return async (dispatch) => {
+    // dispatch(setIsLoading(true));
     let id;
     const key = Store.getState().Reducer.key;
     const state = Store.getState().Reducer;
@@ -657,7 +658,7 @@ export const addProduct = (productName, price, description = "", uri) => {
       description,
       uri,
     };
-    const productData = [...data, profileProduct];
+    // const productData = [...data, profileProduct];
     let profile = [];
     for (let i = 0; i < length; i++) {
       if (state.data[i].key == key) {
@@ -697,10 +698,10 @@ export const addProduct = (productName, price, description = "", uri) => {
         })
         .catch(console.log)
         .then(() => dispatch(removeKhataImage()));
-      dispatch(setRouting(true));
-      dispatch(counterIncrease());
-      dispatch(setIsLoading(false));
     });
+    // dispatch(setIsLoading(false));
+    dispatch(setRouting(true));
+    dispatch(counterIncrease());
 
     // dispatch(removeKhataImage());
     await AsyncStorage.setItem(
