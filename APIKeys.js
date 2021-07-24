@@ -14,7 +14,7 @@ const ios = {
 const androidClientIdGoogle =
   "1032518549083-jj8ovj8b2ak0gg8gc5e3h5g61bjfjd0r.apps.googleusercontent.com";
 const androidStandaloneAppClientId =
-  "1032518549083-jj8ovj8b2ak0gg8gc5e3h5g61bjfjd0r.apps.googleusercontent.com";
+  "1032518549083-r7dfba802nphikhgicsphgmcebiajjhu.apps.googleusercontent.com";
 
 const iosClientIdGoogle =
   "1032518549083-kgnmhjf358veppm8kuksk2urhskpfuf1.apps.googleusercontent.com";

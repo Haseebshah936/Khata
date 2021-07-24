@@ -313,9 +313,9 @@ export const loginWithGoogle = () => {
     try {
       const result = await Google.logInAsync({
         androidClientId: androidClientIdGoogle,
-        iosClientId: iosClientIdGoogle,
+        // iosClientId: iosClientIdGoogle,
         androidStandaloneAppClientId: androidStandaloneAppClientId,
-        iosStandaloneAppClientId: iosStandaloneAppClientId,
+        // iosStandaloneAppClientId: iosStandaloneAppClientId,
         behavior: "system",
         scopes: ["profile", "email"],
       });
@@ -796,7 +796,6 @@ export const setStatus = (productKey) => {
           data: docData,
         });
       })
-      .then(() => alert("Product added"))
       .catch(console.log)
       .then(() => dispatch(removeKhataImage()));
 
