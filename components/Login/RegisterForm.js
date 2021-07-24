@@ -129,7 +129,11 @@ function RegisterForm({ navigation }) {
                       {uri ? (
                         <Image
                           resizeMethod={"resize"}
-                          style={{ overflow: "hidden", borderRadius: 20 }}
+                          style={{
+                            overflow: "hidden",
+                            borderRadius: 20,
+                            marginLeft: 5,
+                          }}
                           source={{
                             width: 120,
                             height: 120,
@@ -139,12 +143,13 @@ function RegisterForm({ navigation }) {
                       ) : (
                         <Image
                           resizeMethod={"resize"}
-                          style={{ overflow: "hidden", borderRadius: 20 }}
-                          source={{
+                          style={{
+                            overflow: "hidden",
                             width: 120,
                             height: 120,
-                            uri: hold,
+                            borderRadius: 20,
                           }}
+                          source={require("../../assets/imageLoad.gif")}
                         />
                       )}
                     </TouchableOpacity>

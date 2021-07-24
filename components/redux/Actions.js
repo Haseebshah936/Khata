@@ -299,11 +299,10 @@ export const loginWithFacebook = () => {
             alert(error);
           }); // Handle Errors here.
         console.log("Successfull");
-      } else {
-        alert("Facebook App not installed");
       }
     } catch ({ message }) {
-      alert(`Facebook Login Error: ${message}`);
+      alert(`Facebook Login Error: ${message}
+      Try other method to login.`);
     }
   };
 };

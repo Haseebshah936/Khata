@@ -164,12 +164,12 @@ function AddProduct({ navigation }) {
             // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
           />
         </View>
+      ) : (
         // <ActivityIndicator
         //   size={"large"}
         //   color={color.primary}
         //   style={{ alignItems: "center", justifyContent: "center" }}
         // />
-      ) : (
         // <ActivityIndicator
         //   size={"large"}
         //   color={color.primary}
@@ -228,7 +228,11 @@ function AddProduct({ navigation }) {
                   {uri ? (
                     <Image
                       resizeMethod={"resize"}
-                      style={{ overflow: "hidden", borderRadius: 20 }}
+                      style={{
+                        overflow: "hidden",
+                        borderRadius: 20,
+                        marginLeft: 5,
+                      }}
                       source={{
                         width: 120,
                         height: 120,
@@ -238,12 +242,13 @@ function AddProduct({ navigation }) {
                   ) : (
                     <Image
                       resizeMethod={"resize"}
-                      style={{ overflow: "hidden", borderRadius: 20 }}
-                      source={{
+                      style={{
+                        overflow: "hidden",
                         width: 120,
                         height: 120,
-                        uri: hold,
+                        borderRadius: 20,
                       }}
+                      source={require("../../assets/imageLoad.gif")}
                     />
                   )}
                 </TouchableOpacity>
