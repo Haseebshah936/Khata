@@ -44,46 +44,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import color from "../Style/color";
 import Check from "../Login/Check";
 
-const DATA = [
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-  {
-    first_name: "Haseeb",
-  },
-];
-
-function UserData({ navigation }) {
+function UserData({ navigation, route }) {
   // const [data, setData] = useState();
   const [isLoading, setLoading] = useState(false);
   const bannerID =
@@ -119,16 +80,18 @@ function UserData({ navigation }) {
     }
   };
 
+  const path = route.params;
+
   const [first, setFirst] = useState(true);
 
   useEffect(() => {
-    // instential();
-    if (first) {
-      dispatch(loadData());
-      setFirst(false);
+    // instential()
+    if (path) {
+      // alert(JSON.stringify(path.path));
+      if (path.path === "Account") navigation.navigate("Account");
     }
     setData(state.data);
-  }, [state.data]);
+  }, [state.data, path]);
 
   const searchName = (text) => {
     if (text === "") {

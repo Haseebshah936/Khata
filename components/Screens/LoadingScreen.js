@@ -1,9 +1,4 @@
-                   yy***
-                   
-                            you tube                                                                                          
-                            
-                            
-                                               import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch } from "react-redux";
 import { auth } from "../../firebase";

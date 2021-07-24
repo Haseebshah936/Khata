@@ -37,37 +37,8 @@ const initialState = {
   password: null,
   khataImage: null,
   routing: false,
-  offlineNote: [
-    {
-      id: 0,
-      description: "Haseeb",
-    },
-  ],
-  data: [
-    {
-      key: 0,
-      userName: "name",
-      phoneNo: "phoneNo",
-      address: "address",
-      uri: null,
-      data: [
-        {
-          key: 0,
-          productName: "Kala",
-          price: 0,
-          description: "",
-          uri: null,
-        },
-        {
-          key: 1,
-          productName: "Kala",
-          price: 1,
-          description: "",
-          uri: null,
-        },
-      ],
-    },
-  ],
+  offlineNote: [],
+  data: [],
 };
 
 export default Reducer = (state = initialState, action) => {

@@ -19,8 +19,6 @@ export default function App() {
         <LoginNavigator />
       </NavigationContainer>
     </Provider>
-    // <Check />
-    // <UserData/>
   );
 }
 

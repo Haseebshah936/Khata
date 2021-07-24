@@ -18,7 +18,7 @@ import ProductBought from "./ProductBought";
 import { Ionicons } from "@expo/vector-icons";
 import RenderRightActionProduct from "./RenderRightActionProduct";
 import { useDispatch, useSelector } from "react-redux";
-import { setKey, setStatus } from "../redux/Actions";
+import { check, setKey, setStatus } from "../redux/Actions";
 import { Button, Menu, Divider, Provider } from "react-native-paper";
 import color from "../Style/color";
 
@@ -181,9 +181,6 @@ function ThingsBought({ navigation, route }) {
       </View>
     );
   };
-  // const stopScroll = () =>{
-  //   setScrollEnable(false)
-  // }
 
   return (
     <Provider>
@@ -220,7 +217,29 @@ function ThingsBought({ navigation, route }) {
                             },
                             {
                               text: "Yes",
-                              onPress: () => dispatch(setStatus(item.key)),
+                              onPress: () =>
+                                check().then((status) => {
+                                  if (status.isInternetReachable) {
+                                    dispatch(setStatus(item.key));
+                                  } else {
+                                    Alert.alert(
+                                      "Internet not Connected",
+                                      "You are not connected to the internet. You can only view data and add data in offline notes. Which you can add later once you are connected.",
+                                      [
+                                        {
+                                          text: "OK",
+                                        },
+                                        {
+                                          text: "Go to offline notes",
+                                          onPress: () =>
+                                            navigation.navigate("Main", {
+                                              path: "Account",
+                                            }),
+                                        },
+                                      ]
+                                    );
+                                  }
+                                }),
                             },
                           ]
                         );
@@ -258,8 +277,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // alignItems: 'center',
-    // justifyContent: "center",
   },
   addButton: {
     position: "absolute",

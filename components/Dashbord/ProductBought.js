@@ -20,7 +20,6 @@ function ProductBought({
   onPress,
   renderRightActions,
 }) {
-  // let amountToPay1 = 10000;
   return (
     <Swipeable renderRightActions={renderRightActions} friction={1}>
       <TouchableOpacity

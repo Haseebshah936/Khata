@@ -124,16 +124,11 @@ function KhataProfile({ route }) {
           bannerSize="leaderboard"
           adUnitID={bannerID}
           servePersonalizedAds={true}
-          // onDidFailToRfeceiveAdWithError={console.log}
         />
       </View>
       <StatusBar hidden style={"inverted"} />
     </SafeAreaView>
   );
 }
-
-// const style = StyleSheet.create({
-//   constainer
-// })
 
 export default KhataProfile;

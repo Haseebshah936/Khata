@@ -13,11 +13,15 @@ const ios = {
 
 const androidClientIdGoogle =
   "1032518549083-jj8ovj8b2ak0gg8gc5e3h5g61bjfjd0r.apps.googleusercontent.com";
+const androidStandaloneAppClientId =
+  "1032518549083-jj8ovj8b2ak0gg8gc5e3h5g61bjfjd0r.apps.googleusercontent.com";
 
 const iosClientIdGoogle =
   "1032518549083-kgnmhjf358veppm8kuksk2urhskpfuf1.apps.googleusercontent.com";
+const iosStandaloneAppClientId =
+  "1032518549083-kgnmhjf358veppm8kuksk2urhskpfuf1.apps.googleusercontent.com";
 
-const appIdFb = "815775045793288";
+const appIdFb = "1860252014152244";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCYrcKj9y1A4AjdOGR6gf6qOPT7kyrWuoI",
@@ -32,7 +36,9 @@ export {
   android,
   ios,
   androidClientIdGoogle,
+  androidStandaloneAppClientId,
   iosClientIdGoogle,
+  iosStandaloneAppClientId,
   firebaseConfig,
   appIdFb,
 };

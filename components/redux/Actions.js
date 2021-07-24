@@ -40,8 +40,10 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import {
   androidClientIdGoogle,
+  androidStandaloneAppClientId,
   appIdFb,
   iosClientIdGoogle,
+  iosStandaloneAppClientId,
 } from "../../APIKeys";
 import { useSelector } from "react-redux";
 import { add } from "react-native-reanimated";
@@ -265,6 +267,10 @@ export const loginWithFacebook = () => {
         const credential = fbAuthProvider.credential(token);
         auth
           .signInWithCredential(credential)
+          .then((u) => {
+            dispatch(loadData());
+            return u;
+          })
           .then(async (userCredential) => {
             const user = userCredential.user;
             let state = {
@@ -272,7 +278,7 @@ export const loginWithFacebook = () => {
               userID: user.uid,
               displayName: user.displayName,
               count: 0,
-              data: [],
+              data: Store.getState().Reducer.data,
               offlineNote: [],
               email: "FB",
               password: null,
@@ -308,6 +314,8 @@ export const loginWithGoogle = () => {
       const result = await Google.logInAsync({
         androidClientId: androidClientIdGoogle,
         iosClientId: iosClientIdGoogle,
+        androidStandaloneAppClientId: androidStandaloneAppClientId,
+        iosStandaloneAppClientId: iosStandaloneAppClientId,
         behavior: "system",
         scopes: ["profile", "email"],
       });
@@ -319,6 +327,10 @@ export const loginWithGoogle = () => {
         );
         auth
           .signInWithCredential(credential)
+          .then((u) => {
+            dispatch(loadData());
+            return u;
+          })
           .then(async (userCredential) => {
             const user = userCredential.user;
             let state = {
@@ -326,7 +338,7 @@ export const loginWithGoogle = () => {
               userID: user.uid,
               displayName: user.displayName,
               count: 0,
-              data: [],
+              data: Store.getState().Reducer.data,
               offlineNote: [],
               email: user.email,
               password: null,
@@ -376,6 +388,10 @@ export const loginWithEmail = (email, password) => {
     // dispatch(loginRequest());
     auth
       .signInWithEmailAndPassword(email, password)
+      .then((u) => {
+        dispatch(loadData());
+        return u;
+      })
       .then(async (userCredential) => {
         const user = userCredential.user;
         if (user.emailVerified) {
@@ -384,7 +400,7 @@ export const loginWithEmail = (email, password) => {
             userID: user.uid,
             displayName: user.displayName,
             count: 0,
-            data: [],
+            data: Store.getState().Reducer.data,
             offlineNote: [],
             email,
             password,
