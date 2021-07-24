@@ -4,7 +4,7 @@ import {
   Image,
   SafeAreaView,
   StyleSheet,
-  Text,
+  TextInput,
   View,
   FlatList,
   Button,
@@ -16,6 +16,7 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 import Constants from "expo-constants";
 import Client from "./Client";
+import { EvilIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import RenderRightAction from "./RenderRightAction";
@@ -91,9 +92,10 @@ function UserData({ navigation }) {
     Platform.OS === "ios" ? ios.admobInterstitial : android.admobInterstitial;
   const state = useSelector((state) => state.Reducer);
   // const isLoading = state.isLoading;
-  const data = state.data;
+  const [data, setData] = useState(state.data);
+  // const data = state.data;
   const dispatch = useDispatch();
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
   const [resfreshing, setRefreshing] = useState(false);
 
   const instential = async () => {
@@ -117,11 +119,67 @@ function UserData({ navigation }) {
     }
   };
 
+  const [first, setFirst] = useState(true);
+
   useEffect(() => {
     // instential();
-    dispatch(loadData());
-  }, []);
+    if (first) {
+      dispatch(loadData());
+      setFirst(false);
+    }
+    setData(state.data);
+  }, [state.data]);
 
+  const searchName = (text) => {
+    if (text === "") {
+      setData(state.data);
+    } else {
+      setData(
+        state.data.filter((m) =>
+          m.userName.toLowerCase().includes(text.toLowerCase())
+        )
+      );
+    }
+  };
+  const header = () => {
+    return (
+      <View
+        style={{
+          paddingTop: Constants.statusBarHeight * 1,
+          paddingLeft: 15,
+          paddingRight: 20,
+          paddingBottom: 10,
+          backgroundColor: color.primary,
+          justifyContent: "space-between",
+          marginBottom: 15,
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "white",
+            width: "80%",
+            padding: 5,
+            paddingLeft: 8,
+            borderRadius: 20,
+            flexDirection: "row",
+          }}
+        >
+          <EvilIcons
+            style={{ alignSelf: "center" }}
+            name="search"
+            size={24}
+            color="black"
+          />
+          <TextInput
+            onChangeText={(text) => searchName(text)}
+            placeholder={"Enter Name"}
+            style={{ flex: 1, paddingLeft: 5 }}
+          />
+        </View>
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* <Button title={"Open"} onPress={()=> navigation.openDrawer()} /> */}
@@ -131,6 +189,7 @@ function UserData({ navigation }) {
         <FlatList
           data={data}
           keyExtractor={(item, index) => index.toString()}
+          ListHeaderComponent={<View>{header()}</View>}
           renderItem={({ item }) => (
             <Client
               avatar={item.uri}
@@ -212,7 +271,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     // alignItems: 'center',
     justifyContent: "space-between",
-    paddingTop: Constants.statusBarHeight * 1.2,
   },
   addButton: {
     // position: 'absolute',

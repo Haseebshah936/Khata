@@ -19,6 +19,7 @@ import {
   ADDPRODUCT,
   ISLOADING,
   ROUTING,
+  SETOFFLINENOTE,
 } from "./ActionTypes";
 
 const initialState = {
@@ -38,27 +39,8 @@ const initialState = {
   routing: false,
   offlineNote: [
     {
-      key: 0,
-      userName: "name",
-      phoneNo: "phoneNo",
-      address: "address",
-      uri: null,
-      data: [
-        {
-          key: 0,
-          productName: "Kala",
-          price: 0,
-          description: "",
-          uri: null,
-        },
-        {
-          key: 1,
-          productName: "Kala",
-          price: 1,
-          description: "",
-          uri: null,
-        },
-      ],
+      id: 0,
+      description: "Haseeb",
     },
   ],
   data: [
@@ -89,7 +71,7 @@ const initialState = {
 };
 
 export default Reducer = (state = initialState, action) => {
-  // console.log(state);
+  // console.log("Offline Note", state.offlineNote);
   switch (action.type) {
     case SUCCESSFULL:
       return {
@@ -113,7 +95,7 @@ export default Reducer = (state = initialState, action) => {
     case OFFLINE:
       return {
         ...state,
-        offline: action.payload,
+        offlineNote: action.payload,
       };
     case SCROLL: //scroll
       return {
@@ -191,6 +173,11 @@ export default Reducer = (state = initialState, action) => {
       return {
         ...state,
         routing: action.payload,
+      };
+    case SETOFFLINENOTE:
+      return {
+        ...state,
+        offlineNote: [...state.offlineNote, action.payload],
       };
     default:
       return state;

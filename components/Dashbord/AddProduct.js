@@ -149,26 +149,26 @@ function AddProduct({ navigation }) {
       </View> */}
       <View></View>
       {isLoading ? (
-        // <View style={{ justifyContent: "center", alignItems: "center" }}>
-        //   <LottieView
-        //     ref={animation}
-        //     autoPlay
-        //     loop
-        //     style={{
-        //       width: 150,
-        //       height: 150,
-        //       backgroundColor: "#fff",
-        //     }}
-        //     source={require("../../assets/loader.json")}
-        //     // OR find more Lottie files @ https://lottiefiles.com/featured
-        //     // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
-        //   />
-        // </View>
-        <ActivityIndicator
-          size={"large"}
-          color={color.primary}
-          style={{ alignItems: "center", justifyContent: "center" }}
-        />
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <LottieView
+            ref={animation}
+            autoPlay
+            loop
+            style={{
+              width: 150,
+              height: 150,
+              backgroundColor: "#fff",
+            }}
+            source={require("../../assets/loader.json")}
+            // OR find more Lottie files @ https://lottiefiles.com/featured
+            // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
+          />
+        </View>
+        // <ActivityIndicator
+        //   size={"large"}
+        //   color={color.primary}
+        //   style={{ alignItems: "center", justifyContent: "center" }}
+        // />
       ) : (
         // <ActivityIndicator
         //   size={"large"}

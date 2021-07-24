@@ -97,7 +97,6 @@ function AddKhata({ navigation }) {
     // animation.current.play();
     if (routing) {
       navigation.navigate("Main");
-      // setIsLoading(false);
       dispatch(setRouting(false));
     }
   }, [count]);
@@ -131,7 +130,7 @@ function AddKhata({ navigation }) {
         <View>
           <Formik
             initialValues={{ name: "", phoneNo: "", address: "" }}
-            onSubmit={(values) => {
+            onSubmit={(values, { resetForm }) => {
               setIsLoading(true);
               {
                 // dispatch(setIsLoading(true));
@@ -164,6 +163,7 @@ function AddKhata({ navigation }) {
                   }
                 });
               }
+              resetForm({ values: "" });
             }}
             validationSchema={validationSchema}
           >
@@ -173,6 +173,7 @@ function AddKhata({ navigation }) {
               errors,
               setFieldTouched,
               touched,
+              resetForm,
             }) => (
               <>
                 <View style={styles.loginContainer}>

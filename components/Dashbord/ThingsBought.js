@@ -91,7 +91,7 @@ function ThingsBought({ navigation, route }) {
         >
           <TouchableOpacity
             activeOpacity={0.6}
-            onPress={() => navigation.pop()}
+            onPress={() => navigation.navigate("Main")}
           >
             <Ionicons name="arrow-back-outline" size={24} color="white" />
           </TouchableOpacity>

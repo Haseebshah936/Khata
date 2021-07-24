@@ -50,6 +50,7 @@ import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Network from "expo-network";
 import { Alert } from "react-native";
+import { State } from "react-native-gesture-handler";
 
 export const increment = (num = 1) => {
   return {
@@ -118,12 +119,10 @@ export const loginFailure = () => {
   };
 };
 
-export const connection = (offline) => {
+export const updateOfflineNote = (offline) => {
   return {
     type: OFFLINE,
-    payload: {
-      offline,
-    },
+    payload: offline,
   };
 };
 
@@ -134,6 +133,7 @@ export const setData = (data) => {
   };
 };
 export const setOfflineNote = (offlineNote) => {
+  console.log("Inside", offlineNote);
   return {
     type: SETOFFLINENOTE,
     payload: offlineNote,
@@ -855,71 +855,108 @@ export const check = async () => {
 export const loadData = () => {
   return async (dispatch) => {
     // alert("Entered");
-    let array = [];
-    check().then((status) => {
-      if (status.isInternetReachable) {
-        auth.onAuthStateChanged((user) => {
-          if (user) {
-            const userID = user.uid;
-            db.collection(userID)
-              .orderBy("key", "asc")
-              .get()
-              .then((querySnapshot) => {
-                if (querySnapshot.size != 0) {
-                  querySnapshot.forEach((documentSnapshot) =>
-                    array.push(documentSnapshot.data())
-                  );
-                }
-              })
-              .then(async () => {
-                // console.log("Data", array);
-                dispatch(addProductData(array));
-                // const state = Store.getState().Reducer;
-                dispatch(setIsLoading(false));
-                const state = Store.getState().Reducer;
-                check().then(async (status) => {
-                  if (status.isInternetReachable) {
-                    // alert("Saved");
-                    try {
-                      await AsyncStorage.setItem(
-                        "AppSKHATA786",
-                        JSON.stringify(state)
-                      );
-                    } catch (error) {
-                      console.log(error);
-                    }
-                  } else {
-                    // alert("Loaded");
-                    getDataAsync()
-                      .then((result) => {
-                        // alert("Data" + result.data);
-                        dispatch(addProductData(result.data));
-                        setIsLoading(false);
-                        // const state = Store.getState().Reducer;
-                      })
-                      .catch(console.log);
+    try {
+      let array = [];
+      check().then((status) => {
+        if (status.isInternetReachable) {
+          auth.onAuthStateChanged((user) => {
+            if (user) {
+              const userID = user.uid;
+              db.collection(userID)
+                .orderBy("key", "asc")
+                .get()
+                .then((querySnapshot) => {
+                  if (querySnapshot.size != 0) {
+                    querySnapshot.forEach((documentSnapshot) =>
+                      array.push(documentSnapshot.data())
+                    );
                   }
-                });
-              })
-              .catch(console.log);
-          } else {
-            dispatch(signOut());
-          }
-        });
-      } else {
-        getDataAsync()
-          .then((result) => {
-            // alert("Data" + result.data);
-            dispatch(addProductData(result.data));
-            setIsLoading(false);
-            // const state = Store.getState().Reducer;
-          })
-          .catch(console.log);
-      }
-    });
+                })
+                .then(async () => {
+                  // console.log("Data", array);
+                  dispatch(addProductData(array));
+                  // const state = Store.getState().Reducer;
+                  dispatch(setIsLoading(false));
+                  const state = Store.getState().Reducer;
+                  check().then(async (status) => {
+                    if (status.isInternetReachable) {
+                      // alert("Saved");
+                      try {
+                        await AsyncStorage.setItem(
+                          "AppSKHATA786",
+                          JSON.stringify(state)
+                        );
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    } else {
+                      // alert("Loaded");
+                      getDataAsync()
+                        .then((result) => {
+                          // alert("Data" + result.data);
+                          dispatch(addProductData(result.data));
+                          setIsLoading(false);
+                          // const state = Store.getState().Reducer;
+                        })
+                        .catch(console.log);
+                    }
+                  });
+                })
+                .catch(console.log);
+            } else {
+              dispatch(signOut());
+            }
+          });
+        } else {
+          getDataAsync()
+            .then((result) => {
+              // alert("Data" + result.data);
+              dispatch(addProductData(result.data));
+              setIsLoading(false);
+              // const state = Store.getState().Reducer;
+            })
+            .catch(console.log);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 
 const getDataAsync = async () => {
   return JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
+};
+
+export const addOfflineNote = (description) => {
+  return async (dispatch) => {
+    let offlineNote = {
+      id: 0,
+      description,
+    };
+    const length = Store.getState().Reducer.offlineNote.length;
+    if (length === 0) {
+      dispatch(setOfflineNote(offlineNote));
+    } else {
+      offlineNote.id = Store.getState().Reducer.offlineNote[length - 1].id + 1;
+      dispatch(setOfflineNote(offlineNote));
+    }
+    await AsyncStorage.setItem(
+      "AppSKHATA786",
+      JSON.stringify(Store.getState().Reducer)
+    );
+  };
+};
+
+export const deleteOfflineNote = (id) => {
+  return async (dispatch) => {
+    const offlineNote = Store.getState().Reducer.offlineNote.filter(
+      (m) => m.id !== id
+    );
+    dispatch(updateOfflineNote(offlineNote));
+    await AsyncStorage.setItem(
+      "AppSKHATA786",
+      JSON.stringify(Store.getState().Reducer)
+    );
+  };
 };

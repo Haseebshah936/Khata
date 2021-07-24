@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
+import color from "../Style/color";
 
 function ProductBought({
   avatar,
@@ -27,10 +28,19 @@ function ProductBought({
         style={styles.data}
         onPress={onPress}
       >
-        <Image
-          style={{ borderRadius: 30 }}
-          source={{ width: 60, height: 60, uri: avatar }}
-        />
+        <View
+          style={{
+            width: 60,
+            height: 60,
+            backgroundColor: color.secondry,
+            borderRadius: 30,
+          }}
+        >
+          <Image
+            style={{ borderRadius: 30 }}
+            source={{ width: 60, height: 60, uri: avatar }}
+          />
+        </View>
         <View style={styles.textContainer}>
           <View style={styles.subTextContainer}>
             <Text style={styles.text}>{name} </Text>

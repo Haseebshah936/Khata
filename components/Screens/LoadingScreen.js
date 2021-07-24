@@ -1,33 +1,43 @@
-import React, { useEffect } from "react";
+                   yy***
+                   
+                            you tube                                                                                          
+                            
+                            
+                                               import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch } from "react-redux";
 import { auth } from "../../firebase";
 import { loginOffline } from "../redux/Actions";
+import LottieView from "lottie-react-native";
+
 function LoadingScreen({ navigation }) {
   const dispatch = useDispatch();
+  const animation = useRef();
+
   useEffect(() => {
     dispatch(loginOffline());
-    // const subscribe = auth.onAuthStateChanged((user) => {
-    //   if (user) {
-    //     // User is signed in, see docs for a list of available properties
-    //     // https://firebase.google.com/docs/reference/js/firebase.User
-    //     var uid = user.uid;
-    //     navigation.replace("Main");
-    //     // ...
-    //   } else {
-    //     // User is signed out
-    //     // ...
-    //     navigation.replace("Login");
-    //   }
-    // });
-    // return subscribe;
   }, []);
   return (
-    <View>
-      <ActivityIndicator
-        style={{ justifyContent: "center", alignItems: "center" }}
-        size={"large"}
-        color={"black"}
+    <View
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1,
+        backgroundColor: "#fff",
+      }}
+    >
+      <LottieView
+        ref={animation}
+        autoPlay
+        loop
+        style={{
+          width: 150,
+          height: 150,
+          backgroundColor: "#fff",
+        }}
+        source={require("../../assets/loader.json")}
+        // OR find more Lottie files @ https://lottiefiles.com/featured
+        // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
       />
     </View>
   );
