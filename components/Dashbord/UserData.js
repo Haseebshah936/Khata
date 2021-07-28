@@ -217,11 +217,23 @@ function UserData({ navigation, route }) {
         />
       )}
       <View style={{ alignSelf: "center" }}>
-        <AdMobBanner
+        {<AdMobBanner
           bannerSize="leaderboard"
           adUnitID={bannerID}
           servePersonalizedAds={true}
-        />
+        /> ? (
+          <AdMobBanner
+            bannerSize="leaderboard"
+            adUnitID={bannerID}
+            servePersonalizedAds={true}
+          />
+        ) : (
+          <ActivityIndicator
+            style={{ marginBottom: 10 }}
+            size={"large"}
+            color={color.primary}
+          />
+        )}
       </View>
       <StatusBar style="auto" hidden />
     </SafeAreaView>

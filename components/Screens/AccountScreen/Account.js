@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   FlatList,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { auth } from "../../../firebase";
 import Profile from "./Profile";
@@ -25,6 +26,7 @@ import {
 import { android, ios } from "../../../APIKeys";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "../../redux/Actions";
+import color from "../../Style/color";
 
 function Account({ navigation }) {
   // const user = auth.currentUser;
@@ -122,7 +124,7 @@ function Account({ navigation }) {
         </View>
       </View>
 
-      <AdMobBanner
+      {<AdMobBanner
         bannerSize="mediumRectangle"
         adUnitID={bannerID}
         servePersonalizedAds={true}
@@ -132,8 +134,31 @@ function Account({ navigation }) {
           flexShrink: 1,
           justifyContent: "flex-end",
         }}
-      />
-
+      /> ? (
+        <AdMobBanner
+          bannerSize="mediumRectangle"
+          adUnitID={bannerID}
+          servePersonalizedAds={true}
+          style={{
+            alignSelf: "center",
+            flexGrow: 1,
+            flexShrink: 1,
+            justifyContent: "flex-end",
+          }}
+        />
+      ) : (
+        <ActivityIndicator
+          style={{
+            alignSelf: "center",
+            flexGrow: 1,
+            flexShrink: 1,
+            justifyContent: "flex-end",
+            marginBottom: 100,
+          }}
+          size={"large"}
+          color={color.primary}
+        />
+      )}
       <StatusBar style={"inverted"} hidden />
     </SafeAreaView>
   );

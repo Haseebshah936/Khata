@@ -20,6 +20,9 @@ function ProductBought({
   onPress,
   renderRightActions,
 }) {
+  if (status) {
+    renderRightActions = () => {};
+  }
   return (
     <Swipeable renderRightActions={renderRightActions} friction={1}>
       <TouchableOpacity

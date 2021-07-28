@@ -365,7 +365,6 @@ export const loginWithGoogle = () => {
     }
   };
 };
-
 export const signOut = () => {
   return async (dispatch) => {
     auth
@@ -381,75 +380,91 @@ export const signOut = () => {
   };
 };
 
+let count = 0;
+
+const decrimentCount = () => {
+  console.log("Count", count);
+  setTimeout(() => {
+    count--;
+    console.log("Decremented", count);
+  }, 60000);
+};
+
 export const loginWithEmail = (email, password) => {
   return async (dispatch) => {
-    let count = 0;
     // dispatch(loginRequest());
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((u) => {
-        dispatch(loadData());
-        return u;
-      })
-      .then(async (userCredential) => {
-        const user = userCredential.user;
-        if (user.emailVerified) {
-          let state = {
-            photoUrl: user.photoURL,
-            userID: user.uid,
-            displayName: user.displayName,
-            count: 0,
-            data: Store.getState().Reducer.data,
-            offlineNote: [],
-            email,
-            password,
-          };
-          await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
-          dispatch(
-            loginSuccessFull(
-              state.userID,
-              state.photoUrl,
-              state.displayName,
-              state.count,
-              state.offlineNote,
-              state.data,
-              state.email,
-              state.password
-            )
-          );
-          // firebase.firestore().clearPersistence().catch(console.log);
+    try {
+      auth
+        .signInWithEmailAndPassword(email, password)
+        .then((u) => {
           dispatch(loadData());
-        } else {
-          Alert.alert(
-            "Email Verfication",
-            "A verification link is already sent to your email. Please verify your email to login.",
-            [
-              {
-                text: "Re-Send",
-                onPress: () => {
-                  if (count === 0) {
-                    count++;
-                    user.sendEmailVerification().then(() => {
-                      console.log("Sent");
-                    });
-                  } else {
-                    Alert.alert("Re-Send Available", "After 60 seconds!");
-                    setTimeout(() => {
-                      count--;
-                    }, 60000);
-                  }
-                },
-              },
-              {
-                text: "OK",
-              },
-            ]
-          );
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
+          return u;
+        })
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+          if (user.emailVerified) {
+            let state = {
+              photoUrl: user.photoURL,
+              userID: user.uid,
+              displayName: user.displayName,
+              count: 0,
+              data: Store.getState().Reducer.data,
+              offlineNote: [],
+              email,
+              password,
+            };
+            await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
+            dispatch(
+              loginSuccessFull(
+                state.userID,
+                state.photoUrl,
+                state.displayName,
+                state.count,
+                state.offlineNote,
+                state.data,
+                state.email,
+                state.password
+              )
+            );
+            // firebase.firestore().clearPersistence().catch(console.log);
+            dispatch(loadData());
+          } else {
+            try {
+              Alert.alert(
+                "Email Verfication",
+                "A verification link is already sent to your email. Please verify your email to login.",
+                [
+                  {
+                    text: "Re-Send",
+                    onPress: () => {
+                      if (count === 0) {
+                        count++;
+                        user
+                          .sendEmailVerification()
+                          .then(() => {
+                            console.log("Sent");
+                          })
+                          .catch(console.log);
+                        decrimentCount();
+                      } else {
+                        Alert.alert("Re-Send Available", "After 60 seconds!");
+                      }
+                    },
+                  },
+                  {
+                    text: "OK",
+                  },
+                ]
+              );
+            } catch (error) {}
+          }
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -6,9 +6,12 @@ import {
   Text,
   Pressable,
   Keyboard,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  TouchableHighlight,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Yup from "yup";
 import { FontAwesome } from "@expo/vector-icons";
@@ -16,6 +19,7 @@ import { Formik } from "formik";
 import ErrorMessage from "./ErrorMessage";
 import * as Facebook from "expo-facebook";
 import * as Google from "expo-google-app-auth";
+import Constants from "expo-constants";
 
 import { auth, fbAuthProvider, googleAuthProvider } from "../../firebase";
 import { Ionicons } from "@expo/vector-icons";
@@ -31,6 +35,7 @@ import {
   loginWithGoogle,
 } from "../redux/Actions";
 import { useDispatch } from "react-redux";
+import color from "../Style/color";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -39,93 +44,21 @@ const validationSchema = Yup.object().shape({
 
 function LoginForm({ navigation }) {
   const dispatch = useDispatch();
-  // const login = (values) => {
-  //   auth
-  //     .signInWithEmailAndPassword(values.email, values.password)
-  //     .then((userCredential) => {
-  //       // Signed in
-  //       var user = userCredential.user;
-  //       navigation.replace("Main");
-  //       // ...
-  //     })
-  //     .catch((error) => {
-  //       var errorCode = error.code;
-  //       var errorMessage = error.message;
-  //       alert(errorMessage + "Line 42");
-  //     });
-  // };
-  // const anonymousSignin = () => {
-  //   auth
-  //     .signInAnonymously()
-  //     .then(() => {
-  //       // Signed in..
-  //       navigation.replace("Main");
-  //     })
-  //     .catch((error) => {
-  //       var errorCode = error.code;
-  //       var errorMessage = error.message;
-  //       alert(errorMessage + "Line 56");
-  //       // ...
-  //     });
-  // };
-
-  // const loginWithFacebook = async () => {
-  //   try {
-  //     await Facebook.initializeAsync({
-  //       appId: appIdFb,
-  //     });
-  //     const { type, token, expirationDate, permissions, declinedPermissions } =
-  //       await Facebook.logInWithReadPermissionsAsync({
-  //         permissions: ["public_profile"],
-  //       });
-
-  //     if (type === "success") {
-  //       // Build Firebase credential with the Facebook access token.
-  //       const credential = fbAuthProvider.credential(token);
-
-  //       // Sign in with credential from the Facebook user.
-  //       auth.signInWithCredential(credential).catch(console.log); // Handle Errors here.
-  //     } else {
-  //       alert("Facebook App not installed");
-  //     }
-  //   } catch ({ message }) {
-  //     alert(`Facebook Login Error: ${message}`);
-  //   }
-  // };
-
-  // const loginWithGoogle = async () => {
-  //   try {
-  //     const result = await Google.logInAsync({
-  //       androidClientId: androidClientIdGoogle,
-  //       iosClientId: iosClientIdGoogle,
-  //       behavior: "web",
-  //       scopes: ["profile", "email"],
-  //     });
-
-  //     if (result.type === "success") {
-  //       const credential = googleAuthProvider.credential(
-  //         result.idToken,
-  //         result.accessToken
-  //       );
-  //       auth.signInWithCredential(credential).catch(console.log);
-  //     } else {
-  //       alert("Google Login Cancelled");
-  //     }
-  //   } catch (e) {
-  //     alert(`Google Login Error: ${e}`);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const unsub = auth.onAuthStateChanged((user) => {
-  //     if (user != null) {
-  //       console.log("We are authenticated now!");
-  //       console.log(user);
-  //       navigation.replace("Main");
-  //     }
-  //   });
-  //   return unsub;
-  // });
+  const [email, setEmail] = useState("");
+  const [visible, setVisible] = useState(false);
+  const sendResetEmail = (email) => {
+    auth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        alert("Password reset email sent");
+        // ..
+      })
+      .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ..
+      });
+  };
 
   return (
     <Pressable onPress={Keyboard.dismiss} style={styles.container}>
@@ -203,6 +136,17 @@ function LoginForm({ navigation }) {
                   LOGIN
                 </Text>
               </TouchableOpacity>
+              <Text
+                onPress={() => setVisible(!visible)}
+                style={{
+                  textDecorationLine: "underline",
+                  alignSelf: "center",
+                  paddingTop: 5,
+                  color: color.primary,
+                }}
+              >
+                Forget Password
+              </Text>
             </>
           )}
         </Formik>
@@ -244,9 +188,107 @@ function LoginForm({ navigation }) {
           Sign Up
         </Text>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={() => {
+          setVisible(false);
+        }}
+      >
+        <Pressable
+          style={styl.centeredView2}
+          onPress={() => Keyboard.dismiss()}
+        >
+          <View style={styl.modalView}>
+            <View
+              style={{
+                width: "100%",
+                borderBottomWidth: 1,
+                height: 50,
+                marginLeft: 15,
+                justifyContent: "center",
+                borderColor: color.primary,
+              }}
+            >
+              <TextInput
+                style={styl.textStyle}
+                onChangeText={(text) => setEmail(text)}
+                placeholder={"Email"}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                marginBottom: 15,
+              }}
+            >
+              <TouchableHighlight
+                style={{ ...styl.openButton, backgroundColor: color.primary }}
+                onPress={() => {
+                  setVisible(!visible);
+                }}
+              >
+                <Text style={styl.modalText}>Close</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={{ ...styl.openButton, backgroundColor: color.primary }}
+                onPress={() => {
+                  sendResetEmail(email);
+                }}
+              >
+                <Text style={styl.modalText}>Submit</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
       <StatusBar style={"auto"} hidden />
     </Pressable>
   );
 }
+
+const styl = StyleSheet.create({
+  centeredView2: {
+    flex: 1,
+    marginTop: Constants.statusBarHeight,
+  },
+  modalView: {
+    flex: 1,
+    margin: 40,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 15,
+  },
+  textStyle: {
+    color: "black",
+  },
+  textStyle1: {
+    color: "black",
+    marginLeft: 15,
+  },
+  modalText: {
+    color: "white",
+    marginLeft: 15,
+    marginRight: 15,
+  },
+});
 
 export default LoginForm;

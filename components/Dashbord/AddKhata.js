@@ -65,9 +65,9 @@ function AddKhata({ navigation }) {
   const hold =
     "https://firebasestorage.googleapis.com/v0/b/todo-64931.appspot.com/o/icon-animation-1.gif?alt=media&token=0a4b467c-53a8-47d1-b4ad-5ece7abed641";
   const dispatch = useDispatch();
-  let isLoading = store.Reducer.isLoading;
+  // let isLoading = store.Reducer.isLoading;
   let count = store.Reducer.count;
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   let routing = store.Reducer.routing;
   const animation = useRef();
 
@@ -85,6 +85,10 @@ function AddKhata({ navigation }) {
   //   return status;
   // };
 
+  const loader = async () => {
+    setIsLoading(true);
+  };
+
   const instential = async () => {
     await AdMobInterstitial.setAdUnitID(interstitialID);
     await AdMobInterstitial.requestAdAsync({
@@ -93,9 +97,16 @@ function AddKhata({ navigation }) {
     if (await AdMobInterstitial.getIsReadyAsync().valueOf)
       await AdMobInterstitial.showAdAsync();
   };
+  const [firstTime, setFirstTime] = useState(false);
   useEffect(() => {
     // animation.current.play();
+    if (!firstTime) {
+      // console.log("i am in3");
+      setIsLoading(false);
+      setFirstTime(true);
+    }
     if (routing) {
+      setIsLoading(false);
       navigation.navigate("Main");
       dispatch(setRouting(false));
     }
@@ -131,7 +142,7 @@ function AddKhata({ navigation }) {
           <Formik
             initialValues={{ name: "", phoneNo: "", address: "" }}
             onSubmit={(values, { resetForm }) => {
-              setIsLoading(true);
+              // setIsLoading(true);
               {
                 // dispatch(setIsLoading(true));
                 // console.log("Tesri bar ma chudai Expo Na");
@@ -283,7 +294,7 @@ function AddKhata({ navigation }) {
                 <TouchableOpacity
                   // onPress={() => login()}
                   onPress={() => {
-                    handleSubmit();
+                    loader().then(() => handleSubmit());
                   }}
                   style={styles.submitButton}
                   activeOpacity={0.85}

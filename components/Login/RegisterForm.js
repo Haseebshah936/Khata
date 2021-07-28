@@ -47,9 +47,10 @@ function RegisterForm({ navigation }) {
   const [message, showMessage] = useState();
   const recaptchaVerifier = useRef(null);
   const [val, setVal] = useState();
+  const [phoneNumber, setPhoneNumber] = useState("");
   const sendVerificationCode = async (phoneNumber) => {
     try {
-      // console.log(phoneNumber);
+      console.log("Phone", phoneNumber);
       const verificationId = await phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current
@@ -81,6 +82,7 @@ function RegisterForm({ navigation }) {
   const submit = async (values) => {
     if (values.phoneNo) {
       setVisible(true);
+      setPhoneNumber(values.phoneNo);
       await sendVerificationCode(values.phoneNo);
     } else {
       dispatch(register(values.email, values.password, values.userName, uri));
@@ -323,6 +325,18 @@ function RegisterForm({ navigation }) {
                   <Text style={styl.modalText}>Submit</Text>
                 </TouchableHighlight>
               </View>
+              <TouchableHighlight
+                style={{
+                  ...styl.openButton,
+                  backgroundColor: color.primary,
+                  alignSelf: "center",
+                }}
+                onPress={() => {
+                  sendVerificationCode(phoneNumber);
+                }}
+              >
+                <Text style={styl.modalText}>Re-Send</Text>
+              </TouchableHighlight>
               <Text style={styl.textStyle1}>{message}</Text>
             </View>
           </Pressable>
