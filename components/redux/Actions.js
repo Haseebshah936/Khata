@@ -230,7 +230,8 @@ export const setRouting = (routing) => {
 export const loginOffline = () => {
   return async (dispatch) => {
     const result = JSON.parse(await AsyncStorage.getItem("AppSKHATA786"));
-    if (result || result != null) {
+    console.log("Result", result);
+    if (result) {
       const state = result;
       dispatch(
         loginSuccessFull(
@@ -370,8 +371,7 @@ export const signOut = () => {
     auth
       .signOut()
       .then(async () => {
-        const state = null;
-        await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(state));
+        await AsyncStorage.setItem("AppSKHATA786", JSON.stringify(null));
         dispatch(logOut());
       })
       .catch((error) => {
@@ -527,7 +527,8 @@ export const register = (
                     user.sendEmailVerification().then(() => {
                       dispatch(verfication());
                       alert(
-                        "An Email Verification link is sent to your email" + st
+                        "An Email Verification link is sent to your email. " +
+                          st
                       );
                       dispatch(loginFailure());
                     });
@@ -543,36 +544,10 @@ export const register = (
             .catch((err) => {
               alert(err);
             });
-          // .then(async () => {
-          //   let state = {
-          //     photoUrl: user.photoURL,
-          //     userID: user.uid,
-          //     displayName: user.displayName,
-          //     count: 0,
-          //     data: [],
-          //     offlineNote: [],
-          //   };
-
-          //   await AsyncStorage.setItem(
-          //     "AppSKHATA786",
-          //     JSON.stringify(state)
-          //   );
-          //   dispatch(
-          //     loginSuccessFull(
-          //       state.userID,
-          //       state.photoUrl,
-          //       state.displayName,
-          //       state.count,
-          //       state.offlineNote,
-          //       state.data
-          //     )
-          //   );
-          // })
-          // .catch(function (error) {
-          //   // An error happened.
-          //   alert(error);
-          // });
         });
+      })
+      .then(() => {
+        // auth.signOut();
       })
       .catch((error) => {
         var errorCode = error.code;

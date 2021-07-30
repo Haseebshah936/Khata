@@ -86,6 +86,18 @@ function UserData({ navigation, route }) {
 
   useEffect(() => {
     // instential()
+    try {
+      auth.onAuthStateChanged((user) => {
+        if (user)
+          if (user.providerData[0].providerId !== "facebook.com") {
+            if (!user.emailVerified) {
+              dispatch(signOut());
+            }
+          }
+      });
+    } catch (error) {
+      console.log(error);
+    }
     if (path) {
       // alert(JSON.stringify(path.path));
       if (path.path === "Account") navigation.navigate("Account");

@@ -50,7 +50,7 @@ function RegisterForm({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const sendVerificationCode = async (phoneNumber) => {
     try {
-      console.log("Phone", phoneNumber);
+      // console.log("Phone", phoneNumber);
       const verificationId = await phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current
